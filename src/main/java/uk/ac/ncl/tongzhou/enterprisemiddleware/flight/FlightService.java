@@ -41,7 +41,7 @@ import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 public class FlightService {
 	@Inject
 	private @Named("logger") Logger log;
-	// @Inject
+	@Inject
 	private FlightValidator validator;
 
 	@Inject

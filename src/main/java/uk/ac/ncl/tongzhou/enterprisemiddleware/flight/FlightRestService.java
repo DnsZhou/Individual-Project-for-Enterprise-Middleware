@@ -9,6 +9,7 @@ package uk.ac.ncl.tongzhou.enterprisemiddleware.flight;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.ejb.Stateless;
@@ -146,15 +147,14 @@ public class FlightRestService {
 			}
 			throw new RestServiceException("Bad Request", responseObj, Response.Status.BAD_REQUEST, ce);
 
-			// } catch (UniqueEmailException e) {
-			// // Handle the unique constraint violation
-			// Map<String, String> responseObj = new HashMap<>();
-			// responseObj.put("email", "That email is already used, please use a unique
-			// email");
-			// throw new RestServiceException("Bad Request", responseObj,
-			// Response.Status.CONFLICT, e);
+		} catch (DestinationDuplicateWithDepartureException e) {
+			// Handle the unique constraint violation
+			Map<String, String> responseObj = new HashMap<>();
+			responseObj.put("destination", "The destination is same with point of departure");
+			throw new RestServiceException("Bad Request", responseObj, Response.Status.BAD_REQUEST, e);
 		} catch (Exception e) {
 			// Handle generic exceptions
+			log.log(Level.SEVERE, e.getMessage());
 			throw new RestServiceException(e);
 		}
 
