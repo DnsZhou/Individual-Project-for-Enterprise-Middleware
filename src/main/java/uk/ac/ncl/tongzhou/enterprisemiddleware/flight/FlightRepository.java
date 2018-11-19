@@ -13,6 +13,10 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+import javax.validation.ConstraintViolationException;
+import javax.validation.ValidationException;
+
+import uk.ac.ncl.tongzhou.enterprisemiddleware.flight.Flight;
 
 /**
  * <p>
@@ -44,8 +48,39 @@ public class FlightRepository {
 	 *
 	 * @return List of Flight objects
 	 */
-	List<Flight> findAllOrderedByName() {
+	List<Flight> findAllOrderedByNumber() {
 		TypedQuery<Flight> query = em.createNamedQuery(Flight.FIND_ALL, Flight.class);
 		return query.getResultList();
+	}
+	
+	/**
+	 * <p>
+	 * Persists the provided Flight object to the application database using the
+	 * EntityManager.
+	 * </p>
+	 *
+	 * <p>
+	 * {@link javax.persistence.EntityManager#persist(Object) persist(Object)} takes
+	 * an entity instance, adds it to the context and makes that instance managed
+	 * (ie future updates to the entity will be tracked)
+	 * </p>
+	 *
+	 * <p>
+	 * persist(Object) will set the @GeneratedValue @Id for an object.
+	 * </p>
+	 *
+	 * @param flight
+	 *            The Flight object to be persisted
+	 * @return The Flight object that has been persisted
+	 * @throws ConstraintViolationException,
+	 *             ValidationException, Exception
+	 */
+	Flight create(Flight flight) throws ConstraintViolationException, ValidationException, Exception {
+		log.info("FlightRepository.create() - Creating " + flight.getNumber());
+
+		// Write the flight to the database.
+		em.persist(flight);
+
+		return flight;
 	}
 }

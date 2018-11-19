@@ -48,15 +48,15 @@ import org.jboss.quickstarts.wfk.contact.Contact;
  * harder to debug.
  */
 @Entity
-@NamedQueries({
-	@NamedQuery(name = Customer.FIND_ALL, query = "SELECT c FROM Customer c ORDER BY c.customerName ASC")
-})
+@NamedQueries({ @NamedQuery(name = Customer.FIND_ALL, query = "SELECT c FROM Customer c ORDER BY c.customerName ASC"),
+		@NamedQuery(name = Customer.FIND_BY_EMAIL, query = "SELECT c FROM Customer c WHERE c.email = :email") })
 @XmlRootElement
 @Table(name = "customer", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
 public class Customer implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	public static final String FIND_ALL = "Customer.findAll";
+	public static final String FIND_BY_EMAIL = "Customer.findByEmail";
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE)
@@ -171,4 +171,19 @@ public class Customer implements Serializable {
 	public int hashCode() {
 		return Objects.hashCode(email);
 	}
+
+	
+	/**   
+	 * toString 
+	 *  
+	 * @return   
+	 * @see java.lang.Object#toString()   
+	 */
+	@Override
+	public String toString() {
+		return "Customer [id=" + id + ", customerName=" + customerName + ", email=" + email + ", phoneNumber="
+				+ phoneNumber + "]";
+	}
+	
+	
 }

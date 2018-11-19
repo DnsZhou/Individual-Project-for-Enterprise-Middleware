@@ -43,8 +43,8 @@ import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 public class CustomerService {
 	@Inject
 	private @Named("logger") Logger log;
-	// @Inject
-	// private CustomerValidator validator;
+	@Inject
+	private CustomerValidator validator;
 
 	@Inject
 	private CustomerRepository crud;
@@ -94,10 +94,10 @@ public class CustomerService {
 	 */
 	Customer create(Customer customer) throws ConstraintViolationException, ValidationException, Exception {
 		log.info("CustomerService.create() - Creating " + customer.getName());
-
+		
 		// Check to make sure the data fits with the parameters in the Customer model
 		// and passes validation.
-		// validator.validateCustomer(customer);
+		validator.validateCustomer(customer);
 
 		// Write the customer to the database.
 		return crud.create(customer);

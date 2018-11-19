@@ -73,16 +73,16 @@ public class Flight implements Serializable {
 	@NotNull
 	@Size(min = 3, max = 3)
 	@Pattern(regexp = "[A-Z]{3}+", message = "Please use a non-empty alphabetical string, which is upper case and 3 characters in length")
-	@Column(name = "flight_point_of_departure")
-	private String flightPointOfDeparture;
+	@Column(name = "point_of_departure")
+	private String pointOfDeparture;
 
 	// Flight destination: a non-empty alphabetical string, which is upper case, 3
 	// characters in length and different from its point of departure.
 	@NotNull
 	@Size(min = 3, max = 3)
 	@Pattern(regexp = "[A-Z]+", message = "Please use a non-empty alphabetical string, which is upper case, 3 characters in length and different from its point of departure")
-	@Column(name = "flight_destination")
-	private String flightDestination;
+	@Column(name = "destination")
+	private String destination;
 
 	public Long getId() {
 		return id;
@@ -93,11 +93,11 @@ public class Flight implements Serializable {
 	}
 
 	/**
-	 * Return the flightNumber.
+	 * Return the number.
 	 *
-	 * @return flightNumber
+	 * @return number
 	 */
-	public String getFlightNumber() {
+	public String getNumber() {
 		return number;
 	}
 
@@ -107,7 +107,7 @@ public class Flight implements Serializable {
 	 * @param flightNumber:
 	 *            flightNumber to be set.
 	 */
-	public void setFlightNumber(String flightNumber) {
+	public void setNumber(String flightNumber) {
 		this.number = flightNumber;
 	}
 
@@ -116,8 +116,8 @@ public class Flight implements Serializable {
 	 *
 	 * @return flightPointOfDeparture
 	 */
-	public String getFlightPointOfDeparture() {
-		return flightPointOfDeparture;
+	public String getPointOfDeparture() {
+		return pointOfDeparture;
 	}
 
 	/**
@@ -126,8 +126,8 @@ public class Flight implements Serializable {
 	 * @param flightPointOfDeparture:
 	 *            flightPointOfDeparture to be set.
 	 */
-	public void setFlightPointOfDeparture(String flightPointOfDeparture) {
-		this.flightPointOfDeparture = flightPointOfDeparture;
+	public void setPointOfDeparture(String flightPointOfDeparture) {
+		this.pointOfDeparture = flightPointOfDeparture;
 	}
 
 	/**
@@ -135,8 +135,8 @@ public class Flight implements Serializable {
 	 *
 	 * @return flightDestination
 	 */
-	public String getFlightDestination() {
-		return flightDestination;
+	public String getDestination() {
+		return destination;
 	}
 
 	/**
@@ -145,8 +145,8 @@ public class Flight implements Serializable {
 	 * @param flightDestination:
 	 *            flightDestination to be set.
 	 */
-	public void setFlightDestination(String flightDestination) {
-		this.flightDestination = flightDestination;
+	public void setDestination(String flightDestination) {
+		this.destination = flightDestination;
 	}
 
 	@Override

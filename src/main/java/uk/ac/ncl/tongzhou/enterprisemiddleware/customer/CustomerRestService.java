@@ -25,8 +25,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.jboss.quickstarts.wfk.area.InvalidAreaCodeException;
-import org.jboss.quickstarts.wfk.contact.UniqueEmailException;
 import org.jboss.quickstarts.wfk.util.RestServiceException;
 
 import io.swagger.annotations.Api;
@@ -125,7 +123,6 @@ public class CustomerRestService {
 	 *            be <i>created</i> via {@link CustomerService#create(Customer)}
 	 * @return A Response indicating the outcome of the create operation
 	 */
-	@SuppressWarnings("unused")
 	@POST
 	@ApiOperation(value = "Add a new Customer to the database")
 	@ApiResponses(value = { @ApiResponse(code = 201, message = "Customer created successfully."),
@@ -163,11 +160,7 @@ public class CustomerRestService {
 			Map<String, String> responseObj = new HashMap<>();
 			responseObj.put("email", "That email is already used, please use a unique email");
 			throw new RestServiceException("Bad Request", responseObj, Response.Status.CONFLICT, e);
-		} catch (InvalidAreaCodeException e) {
-			Map<String, String> responseObj = new HashMap<>();
-			responseObj.put("area_code", "The telephone area code provided is not recognised, please provide another");
-			throw new RestServiceException("Bad Request", responseObj, Response.Status.BAD_REQUEST, e);
-		} catch (Exception e) {
+		}  catch (Exception e) {
 			// Handle generic exceptions
 			throw new RestServiceException(e);
 		}

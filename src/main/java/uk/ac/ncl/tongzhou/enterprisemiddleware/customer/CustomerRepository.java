@@ -82,4 +82,37 @@ public class CustomerRepository {
 
 		return customer;
 	}
+
+	/**
+	 * <p>
+	 * Returns a single Customer object, specified by a String email.
+	 * </p>
+	 *
+	 * <p>
+	 * If there is more than one Customer with the specified email, only the first
+	 * encountered will be returned.
+	 * <p/>
+	 *
+	 * @param email
+	 *            The email field of the Customer to be returned
+	 * @return The first Customer with the specified email
+	 */
+	Customer findByEmail(String email) {
+		TypedQuery<Customer> query = em.createNamedQuery(Customer.FIND_BY_EMAIL, Customer.class).setParameter("email",
+				email);
+		return query.getSingleResult();
+	}
+
+	/**
+	 * <p>
+	 * Returns a single Customer object, specified by a Long id.
+	 * <p/>
+	 *
+	 * @param id
+	 *            The id field of the Customer to be returned
+	 * @return The Customer with the specified id
+	 */
+	Customer findById(Long id) {
+		return em.find(Customer.class, id);
+	}
 }
