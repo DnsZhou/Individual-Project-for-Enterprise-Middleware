@@ -55,6 +55,7 @@ public class Flight implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	public static final String FIND_ALL = "Flight.findAll";
+	public static final String FIND_BY_NUMBER = "Flight.findByNumber";
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE)
@@ -63,24 +64,21 @@ public class Flight implements Serializable {
 	// Flight number: a non-empty alpha-numerical string which is 5 characters in
 	// length.
 	@NotNull(message = "Flight Number could not be empty")
-	@Size(min = 5, max = 5)
-	@Pattern(regexp = "[A-Za-z0-9]{5}+", message = "Please use a non-empty alpha-numerical string which is 5 characters in length")
+	@Pattern(regexp = "[A-Za-z0-9]{5}", message = "Please use a non-empty alpha-numerical string which is 5 characters in length")
 	@Column(name = "number")
 	private String number;
 
 	// Flight point of departure: a non-empty alphabetical string, which is upper
 	// case and 3 characters in length.
 	@NotNull(message = "Point Of Departure could not be empty")
-	@Size(min = 3, max = 3)
-	@Pattern(regexp = "[A-Z]{3}+", message = "Please use a non-empty alphabetical string, which is upper case and 3 characters in length")
+	@Pattern(regexp = "[A-Z]{3}", message = "Please use a non-empty alphabetical string, which is upper case and 3 characters in length")
 	@Column(name = "point_of_departure")
 	private String pointOfDeparture;
 
 	// Flight destination: a non-empty alphabetical string, which is upper case, 3
 	// characters in length and different from its point of departure.
 	@NotNull(message = "Destination could not be empty")
-	@Size(min = 3, max = 3)
-	@Pattern(regexp = "[A-Z]+", message = "Please use a non-empty alphabetical string, which is upper case, 3 characters in length and different from its point of departure")
+	@Pattern(regexp = "[A-Z]{3}", message = "Please use a non-empty alphabetical string, which is upper case, 3 characters in length and different from its point of departure")
 	@Column(name = "destination")
 	private String destination;
 

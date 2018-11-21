@@ -21,7 +21,9 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -63,6 +65,7 @@ public class Booking implements Serializable {
 	private Long flightId;
 
 	@NotNull(message = "Booking date could not be empty")
+	@Future(message = "Booking date should be in the future")
 	@Column(name = "booking_date")
 	@Temporal(TemporalType.DATE)
 	private Date bookingDate;
