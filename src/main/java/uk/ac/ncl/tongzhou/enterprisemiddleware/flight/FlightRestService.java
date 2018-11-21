@@ -119,6 +119,7 @@ public class FlightRestService {
 	@ApiOperation(value = "Add a new Flight to the database")
 	@ApiResponses(value = { @ApiResponse(code = 201, message = "Flight created successfully."),
 			@ApiResponse(code = 400, message = "Invalid Flight supplied in request body"),
+			@ApiResponse(code = 409, message = "Flight supplied in request body conflicts with an existing Flight"),
 			@ApiResponse(code = 500, message = "An unexpected error occurred whilst processing the request") })
 	public Response createFlight(
 			@ApiParam(value = "JSON representation of Flight object to be added to the database", required = true) Flight flight) {
@@ -151,6 +152,11 @@ public class FlightRestService {
 			Map<String, String> responseObj = new HashMap<>();
 			responseObj.put("destination", "The destination is same with point of departure");
 			throw new RestServiceException("Bad Request", responseObj, Response.Status.BAD_REQUEST, e);
+		} catch (UniqueFlightNumberException e) {
+			// Handle the unique constraint violation
+			Map<String, String> responseObj = new HashMap<>();
+			responseObj.put("number", "The Flight number already exists in system");
+			throw new RestServiceException("Bad Request", responseObj, Response.Status.CONFLICT, e);
 		} catch (Exception e) {
 			// Handle generic exceptions
 			log.log(Level.SEVERE, e.getMessage());

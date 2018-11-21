@@ -13,6 +13,9 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 
@@ -95,4 +98,18 @@ public class FlightRepository {
 		return flight;
 	}
 
+	/**
+	 * findByNumber
+	 * 
+	 * @param flightNumber
+	 * @return Flight with the flight number
+	 */
+	public Flight findByNumber(String number) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Flight> criteria = cb.createQuery(Flight.class);
+		Root<Flight> flight = criteria.from(Flight.class);
+		criteria.select(flight).where(cb.equal(flight.get("number"), number));
+		List<Flight> res = em.createQuery(criteria).getResultList();
+		return res.size() > 0 ? res.get(0) : null;
+	}
 }

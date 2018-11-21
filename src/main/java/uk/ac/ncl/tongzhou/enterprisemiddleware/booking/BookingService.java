@@ -6,6 +6,7 @@
  */
 package uk.ac.ncl.tongzhou.enterprisemiddleware.booking;
 
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -69,7 +70,7 @@ public class BookingService {
 	 * @return List of Booking objects
 	 */
 	List<Booking> findAllOrderedByName() {
-		return crud.findAllOrderedByName();
+		return crud.findAllOrderedById();
 	}
 	
 	/**
@@ -131,4 +132,27 @@ public class BookingService {
 
         return deletedBooking;
     }
+
+	
+	
+	/**   
+	 *  findAllByFlightId   
+	 * 
+	 * @param flightId
+	 * @return the result with the flightId provided         
+	 */
+    List<Booking> findAllByFlightId(Long flightId) {
+		return crud.findAllByFlightId(flightId);
+	}
+	
+	
+	/**   
+	 *  findAllByBookingDate   
+	 * 
+	 * @param bookingDate
+	 * @return the result with the bookingDate provided       
+	 */
+	List<Booking> findAllByBookingDate(Date bookingDate) {
+		return crud.findAllByBookingDate(bookingDate);
+	}
 }

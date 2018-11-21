@@ -46,7 +46,7 @@ import uk.ac.ncl.tongzhou.enterprisemiddleware.flight.Flight;
  */
 @Entity
 @NamedQueries({
-	@NamedQuery(name = Flight.FIND_ALL, query = "SELECT c FROM Flight c ORDER BY c.number ASC")
+	@NamedQuery(name = Flight.FIND_ALL, query = "SELECT c FROM Flight c ORDER BY c.number ASC"),
 })
 @XmlRootElement
 @Table(name = "flight", uniqueConstraints = @UniqueConstraint(columnNames = "number"))
@@ -55,7 +55,6 @@ public class Flight implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	public static final String FIND_ALL = "Flight.findAll";
-	public static final String FIND_BY_NUMBER = "Flight.findByNumber";
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE)

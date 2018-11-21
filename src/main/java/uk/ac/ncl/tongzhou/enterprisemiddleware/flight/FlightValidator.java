@@ -8,19 +8,14 @@ package uk.ac.ncl.tongzhou.enterprisemiddleware.flight;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.persistence.NoResultException;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 import javax.validation.Validator;
-
-import uk.ac.ncl.tongzhou.enterprisemiddleware.flight.Flight;
-import uk.ac.ncl.tongzhou.enterprisemiddleware.flight.FlightRepository;
 
 /**
  * <p>
@@ -44,18 +39,28 @@ public class FlightValidator {
 	private FlightRepository crud;
 
 	/**
-     * <p>Validates the given Flight object and throws validation exceptions based on the type of error. If the error is standard
-     * bean validation errors then it will throw a ConstraintValidationException with the set of the constraints violated.</p>
-     *
-     *
-     * <p>If the error is caused because an existing flight with the same email is registered it throws a regular validation
-     * exception so that it can be interpreted separately.</p>
-     *
-     *
-     * @param flight The Flight object to be validated
-     * @throws ConstraintViolationException If Bean Validation errors exist
-     */
-	void validateFlight(Flight flight) throws ConstraintViolationException, ValidationException {
+	 * <p>
+	 * Validates the given Flight object and throws validation exceptions based on
+	 * the type of error. If the error is standard bean validation errors then it
+	 * will throw a ConstraintValidationException with the set of the constraints
+	 * violated.
+	 * </p>
+	 *
+	 *
+	 * <p>
+	 * If the error is caused because an existing flight with the same email is
+	 * registered it throws a regular validation exception so that it can be
+	 * interpreted separately.
+	 * </p>
+	 *
+	 *
+	 * @param flight
+	 *            The Flight object to be validated
+	 * @throws ConstraintViolationException
+	 *             If Bean Validation errors exist
+	 */
+	void validateFlight(Flight flight)
+			throws ConstraintViolationException, ValidationException, UniqueFlightNumberException {
 		// Create a bean validator and check for issues.
 		Set<ConstraintViolation<Flight>> violations = validator.validate(flight);
 		if (!violations.isEmpty()) {
@@ -64,6 +69,10 @@ public class FlightValidator {
 		// Check the uniqueness of the email address
 		if (destinationDuplicateWithdeparture(flight)) {
 			throw new DestinationDuplicateWithDepartureException("Destination Duplicate With Departure Point");
+		}
+		// Check whether the flight number already exists
+		if (flightNumberExists(flight)) {
+			throw new UniqueFlightNumberException("Flight Number Exists in System");
 		}
 	}
 
@@ -81,5 +90,18 @@ public class FlightValidator {
 	 */
 	boolean destinationDuplicateWithdeparture(Flight flight) {
 		return flight.getDestination().equals(flight.getPointOfDeparture());
+	}
+
+	/**
+	 * <p>
+	 * Checks if a flight number already exists.
+	 * </p>
+	 * 
+	 * @param flight
+	 * @return boolean which represents whether a flight number already exists
+	 */
+	boolean flightNumberExists(Flight flight) {
+		Flight findFlight = crud.findByNumber(flight.getNumber());
+		return findFlight != null;
 	}
 }

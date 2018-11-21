@@ -100,7 +100,8 @@ public class CustomerRepository {
 	Customer findByEmail(String email) {
 		TypedQuery<Customer> query = em.createNamedQuery(Customer.FIND_BY_EMAIL, Customer.class).setParameter("email",
 				email);
-		return query.getSingleResult();
+		List<Customer> res = query.getResultList();
+		return res.size() > 0 ? res.get(0) : null;
 	}
 
 	/**

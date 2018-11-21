@@ -43,6 +43,12 @@ import org.hibernate.validator.constraints.NotEmpty;
  *
  * @author Tong Zhou
  */
+
+/**
+ * Booking 
+ * 
+ * 
+ */
 @Entity
 @NamedQueries({ @NamedQuery(name = Booking.FIND_ALL, query = "SELECT c FROM Booking c ORDER BY c.id ASC") })
 @XmlRootElement
@@ -163,15 +169,18 @@ public class Booking implements Serializable {
 		return Objects.hashCode(id);
 	}
 
-	/**
-	 * toString
-	 * 
-	 * @return
-	 * @see java.lang.Object#toString()
+	
+	/**   
+	 * toString 
+	 *  
+	 * @return   
+	 * @see java.lang.Object#toString()   
 	 */
 	@Override
 	public String toString() {
-		return "Booking [id=" + id + ", flightId=" + flightId + ", bookingDate=" + bookingDate + "]";
+		return "Booking [id=" + id + ", customerId=" + customerId + ", flightId=" + flightId + ", bookingDate="
+				+ bookingDate + "]";
 	}
+
 
 }

@@ -113,4 +113,17 @@ public class FlightService {
 	public Flight findById(Long id) {
 		return crud.findById(id);
 	}
+
+	/**
+	 * <p>
+	 * Returns a single Flight object, specified by a Long id.
+	 * </p>
+	 *
+	 * @param flightNumber
+	 *            The number of the Flight to be returned
+	 * @return The Flight with the specified Number
+	 */
+	public Flight findByNumber(String flightNumber) {
+		return crud.findByNumber(flightNumber);
+	}
 }

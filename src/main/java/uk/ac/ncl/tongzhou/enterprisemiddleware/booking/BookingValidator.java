@@ -7,6 +7,7 @@
 package uk.ac.ncl.tongzhou.enterprisemiddleware.booking;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -42,10 +43,10 @@ public class BookingValidator {
 
 	@Inject
 	private BookingRepository crud;
-	
+
 	@Inject
 	private FlightService flightService;
-	
+
 	@Inject
 	private CustomerService customerService;
 
@@ -63,52 +64,69 @@ public class BookingValidator {
 	 * @throws ConstraintViolationException
 	 *             If Bean Validation errors exist
 	 */
-	void validateBooking(Booking booking) throws CustomerNotFoundException, ConstraintViolationException, ValidationException {
+	void validateBooking(Booking booking)
+			throws CustomerNotFoundException, ConstraintViolationException, ValidationException {
 		// Create a bean validator and check for issues.
 		Set<ConstraintViolation<Booking>> violations = validator.validate(booking);
 		if (!violations.isEmpty()) {
 			throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(violations));
 		}
 		// Check the customer id and flight id of the booking
-		if(customerIdNotExist(booking)) {
+		if (customerIdNotExist(booking)) {
 			throw new CustomerNotFoundException("Customer Not Found");
 		}
-		if(flightIdNotExist(booking)) {
+		if (flightIdNotExists(booking)) {
 			throw new FlightNotFoundException("Flight Not Found");
 		}
+		// Check whether the Booking flight and date exists
+		if (flightIdAndDateExists(booking)) {
+			throw new FlightAndDateExistsException("Booking flight and date duplicate with existing record");
+		}
 	}
-	
-	
-	/**   
-	 *  customerIdNotExist   
+
+	/**
+	 * customerIdNotExist
 	 * 
 	 * <p>
-	 * Validating if the given Customer id exists in system. 
+	 * Validating if the given Customer id exists in system.
 	 * </p>
-	 *  
+	 * 
 	 * @param booking
 	 * @return
-	 * @throws CustomerNotFoundException         
 	 */
-	boolean customerIdNotExist(Booking booking) throws CustomerNotFoundException {
+	boolean customerIdNotExist(Booking booking) {
 		Customer customer = customerService.findById(booking.getCustomerId());
 		return customer == null;
 	}
-	
-	
-	/**   
-	 *  flightIdNotExist   
+
+	/**
+	 * flightIdNotExist
 	 * 
 	 * <p>
-	 * Validating if the given Flight id exists in system. 
+	 * Validating if the given Flight id exists in system.
 	 * </p>
 	 * 
 	 * @param booking
 	 * @return
-	 * @throws CustomerNotFoundException         
 	 */
-	boolean flightIdNotExist(Booking booking) throws CustomerNotFoundException {
+	boolean flightIdNotExists(Booking booking) {
 		Flight flight = flightService.findById(booking.getFlightId());
 		return flight == null;
+	}
+
+	/**
+	 * flightIdAndDateExists
+	 * 
+	 * <p>
+	 * Validating if the given Flight id exists in system.
+	 * </p>
+	 * 
+	 * @param booking
+	 * @return
+	 */
+	boolean flightIdAndDateExists(Booking booking) {
+		List<Booking> bookings = crud.findAllByBookingDate(booking.getBookingDate());
+		bookings.contains(crud.findAllByFlightId(booking.getFlightId()));
+		return bookings != null && bookings.size() > 0;
 	}
 }

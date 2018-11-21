@@ -25,6 +25,7 @@ insert into Contact (id, first_name, last_name, email, phone_number, birth_date)
 -- Following data added by Tong Zhou
 insert into Customer (id, customer_name,email, phone_number) values (100001, 'User One', 'user1@ncl.ac.uk', '07420000001')
 insert into Customer (id, customer_name,email, phone_number) values (100002, 'User Two', 'user2@ncl.ac.uk', '07420000002')
+insert into Customer (id, customer_name,email, phone_number) values (100003, 'User Three', 'user3@ncl.ac.uk', '07420000003')
 insert into Flight (id, destination,point_of_departure, number) values (10001, 'PVG', 'NCL', 'EU001')
 insert into Flight (id, destination,point_of_departure, number) values (10002, 'HKD', 'NCL', 'EU002')
 insert into Flight (id, destination,point_of_departure, number) values (10003, 'FRA', 'MAN', 'EU003')

@@ -6,6 +6,7 @@
  */
 package uk.ac.ncl.tongzhou.enterprisemiddleware.booking;
 
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -13,6 +14,9 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 
@@ -47,7 +51,7 @@ public class BookingRepository {
 	 *
 	 * @return List of Booking objects
 	 */
-	List<Booking> findAllOrderedByName() {
+	List<Booking> findAllOrderedById() {
 		TypedQuery<Booking> query = em.createNamedQuery(Booking.FIND_ALL, Booking.class);
 		return query.getResultList();
 	}
@@ -135,5 +139,34 @@ public class BookingRepository {
 		}
 
 		return booking;
+	}
+
+	/**
+	 * findByFlightIdAndDate
+	 * 
+	 * @param flightId
+	 * @return the result with the flightId provided
+	 */
+	public List<Booking> findAllByFlightId(Long flightId) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Booking> criteria = cb.createQuery(Booking.class);
+		Root<Booking> booking = criteria.from(Booking.class);
+		criteria.select(booking).where(cb.equal(booking.get("flightId"), flightId));
+		return em.createQuery(criteria).getResultList();
+	}
+
+	
+	/**   
+	 *  findAllByBookingDate   
+	 * 
+	 * @param bookingDate
+	 * @return the result with the bookingDate provided        
+	 */
+	public List<Booking> findAllByBookingDate(Date bookingDate) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Booking> criteria = cb.createQuery(Booking.class);
+		Root<Booking> booking = criteria.from(Booking.class);
+		criteria.select(booking).where(cb.equal(booking.get("bookingDate"), bookingDate));
+		return em.createQuery(criteria).getResultList();
 	}
 }

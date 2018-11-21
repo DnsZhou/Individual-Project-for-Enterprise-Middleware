@@ -158,11 +158,11 @@ public class BookingRestService {
 			Map<String, String> responseObj = new HashMap<>();
 			responseObj.put("flightId", "The flightId does not exist");
 			throw new RestServiceException("Bad Request", responseObj, Response.Status.BAD_REQUEST, e);
-//		} catch (FlightAndDateExistsException e) {
-//			// Handle the unique constraint violation
-//			Map<String, String> responseObj = new HashMap<>();
-//			responseObj.put("flightId,bookingTime", "Booking flight and date duplicate with existing record");
-//			throw new RestServiceException("Bad Request", responseObj, Response.Status.CONFLICT, e);
+		} catch (FlightAndDateExistsException e) {
+			// Handle the unique constraint violation
+			Map<String, String> responseObj = new HashMap<>();
+			responseObj.put("flightId,bookingTime", "Booking flight and date duplicate with existing record");
+			throw new RestServiceException("Bad Request", responseObj, Response.Status.CONFLICT, e);
 		} catch (Exception e) {
 			// Handle generic exceptions
 			log.log(Level.SEVERE, e.getMessage());
