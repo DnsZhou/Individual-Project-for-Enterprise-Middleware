@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ncl.tongzhou.enterprisemiddleware.flight;
+package uk.ac.ncl.tongzhou.enterprisemiddleware.customer;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -43,16 +43,17 @@ import org.junit.runner.RunWith;
 /**
  * <p>
  * A suite of tests, run with {@link org.jboss.arquillian Arquillian} to test
- * the JAX-RS endpoint for Flight creation functionality (see
- * {@link FlightRestService#createFlight(Flight) createFlight(Flight)}).
+ * the JAX-RS endpoint for Customer creation functionality (see
+ * {@link CustomerRestService#createCustomer(Customer)
+ * createCustomer(Customer)}).
  * </p>
  *
  * @author balunasj
  * @author Joshua Wilson
- * @see FlightRestService
+ * @see CustomerRestService
  */
 @RunWith(Arquillian.class)
-public class FlightRegistrationTest {
+public class CustomerUnitTest {
 
 	/**
 	 * <p>
@@ -82,7 +83,7 @@ public class FlightRegistrationTest {
 	}
 
 	@Inject
-	FlightRestService flightRestService;
+	CustomerRestService customerRestService;
 
 	@Inject
 	@Named("logger")
@@ -94,26 +95,26 @@ public class FlightRegistrationTest {
 	@Test
 	@InSequence(1)
 	public void testRegister() throws Exception {
-		Flight flight = createFlightInstance("PVG", "NU001", "NCL");
-		Response response = flightRestService.createFlight(flight);
+		Customer customer = createCustomerInstance("Jack Doe", "jack@mailinator.com", "07422568526");
+		Response response = customerRestService.createCustomer(customer);
 
 		assertEquals("Unexpected response status", 201, response.getStatus());
-		log.info(" New flight was persisted and returned status " + response.getStatus());
+		log.info(" New customer was persisted and returned status " + response.getStatus());
 	}
 
 	@SuppressWarnings("unchecked")
 	@Test
 	@InSequence(2)
 	public void testInvalidRegister() {
-		Flight flight = createFlightInstance("", "", "");
+		Customer customer = createCustomerInstance("", "", "");
 
 		try {
-			flightRestService.createFlight(flight);
+			customerRestService.createCustomer(customer);
 			fail("Expected a RestServiceException to be thrown");
 		} catch (RestServiceException e) {
 			assertEquals("Unexpected response status", Response.Status.BAD_REQUEST, e.getStatus());
 			assertEquals("Unexpected response body", 3, e.getReasons().size());
-			log.info("Invalid flight register attempt failed with return code " + e.getStatus());
+			log.info("Invalid customer register attempt failed with return code " + e.getStatus());
 		}
 
 	}
@@ -121,18 +122,23 @@ public class FlightRegistrationTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	@InSequence(3)
-	public void testDestinationDuplicateWithDeparture() throws Exception {
+	public void testDuplicateEmail() throws Exception {
 		// Register an initial user
-		Flight flight = createFlightInstance("PVG", "NU001", "PVG");
+		Customer customer = createCustomerInstance("Jane Doe", "jane@mailinator.com", "02125551234");
+		customerRestService.createCustomer(customer);
+
+		// Register a different user with the same email
+		Customer anotherCustomer = createCustomerInstance("John Doe", "jane@mailinator.com", "02133551234");
+
 		try {
-			flightRestService.createFlight(flight);
+			customerRestService.createCustomer(anotherCustomer);
 			fail("Expected a RestServiceException to be thrown");
 		} catch (RestServiceException e) {
-			assertEquals("Unexpected response status", Response.Status.BAD_REQUEST, e.getStatus());
-			assertTrue("The destination is same with point of departure",
-					e.getCause() instanceof DestinationDuplicateWithDepartureException);
+			assertEquals("Unexpected response status", Response.Status.CONFLICT, e.getStatus());
+			assertTrue("Unexecpted error. Should be Unique email violation",
+					e.getCause() instanceof UniqueEmailException);
 			assertEquals("Unexpected response body", 1, e.getReasons().size());
-			log.info("Duplicate destination with departure attempt failed with return code " + e.getStatus());
+			log.info("Duplicate customer register attempt failed with return code " + e.getStatus());
 		}
 
 	}
@@ -140,18 +146,24 @@ public class FlightRegistrationTest {
 	/**
 	 * <p>
 	 * A utility method to construct a
-	 * {@link org.jboss.quickstarts.wfk.flight.Flight Flight} object for use in
-	 * testing. This object is not persisted.
+	 * {@link org.jboss.quickstarts.wfk.customer.Customer Customer} object for use
+	 * in testing. This object is not persisted.
 	 * </p>
 	 *
-	 * @return The Flight object create
+	 * @param name
+	 *            The name of the Customer being created
+	 * @param email
+	 *            The email address of the Customer being created
+	 * @param phone
+	 *            The phone number of the Customer being created
+	 * @return The Customer object create
 	 */
-	private Flight createFlightInstance(String destination, String number, String pointOfDeparture) {
-		Flight flight = new Flight();
-		flight.setDestination(destination);
-		flight.setNumber(number);
-		flight.setPointOfDeparture(pointOfDeparture);
-		return flight;
+	private Customer createCustomerInstance(String name, String email, String phoneNumber) {
+		Customer customer = new Customer();
+		customer.setName(name);
+		customer.setEmail(email);
+		customer.setPhoneNumber(phoneNumber);
+		return customer;
 	}
 
 }
