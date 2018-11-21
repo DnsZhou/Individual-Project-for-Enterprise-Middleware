@@ -21,7 +21,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -96,17 +95,11 @@ public class CustomerRestService {
 	 */
 	@GET
 	@ApiOperation(value = "Fetch all Customers", notes = "Returns a JSON array of all stored Customer objects.")
-	public Response retrieveAllCustomers(@QueryParam("customerName") String customerName) {
+	public Response retrieveAllCustomers() {
 		// Create an empty collection to contain the intersection of Customers to be
 		// returned
 		List<Customer> customers;
-
-		if (customerName == null) {
-			customers = service.findAllOrderedByName();
-		} else {
-			// customers = service.findAllByName(name);
-			customers = service.findAllOrderedByName();
-		}
+		customers = service.findAllOrderedByName();
 
 		return Response.ok(customers).build();
 	}
@@ -160,7 +153,7 @@ public class CustomerRestService {
 			Map<String, String> responseObj = new HashMap<>();
 			responseObj.put("email", "That email is already used, please use a unique email");
 			throw new RestServiceException("Bad Request", responseObj, Response.Status.CONFLICT, e);
-		}  catch (Exception e) {
+		} catch (Exception e) {
 			// Handle generic exceptions
 			throw new RestServiceException(e);
 		}

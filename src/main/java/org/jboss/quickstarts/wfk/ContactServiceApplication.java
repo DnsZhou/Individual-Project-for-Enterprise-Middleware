@@ -16,10 +16,11 @@
  */
 package org.jboss.quickstarts.wfk;
 
-import io.swagger.jaxrs.config.BeanConfig;
-import uk.ac.ncl.tongzhou.enterprisemiddleware.booking.BookingRestService;
-import uk.ac.ncl.tongzhou.enterprisemiddleware.customer.CustomerRestService;
-import uk.ac.ncl.tongzhou.enterprisemiddleware.flight.FlightRestService;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.ws.rs.ApplicationPath;
+import javax.ws.rs.core.Application;
 
 import org.jboss.quickstarts.wfk.contact.ContactRestService;
 import org.jboss.quickstarts.wfk.util.JacksonConfig;
@@ -27,10 +28,10 @@ import org.jboss.quickstarts.wfk.util.RestServiceExceptionHandler;
 import org.jboss.resteasy.plugins.providers.RegisterBuiltin;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
 
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
-import java.util.HashSet;
-import java.util.Set;
+import io.swagger.jaxrs.config.BeanConfig;
+import uk.ac.ncl.tongzhou.enterprisemiddleware.booking.BookingRestService;
+import uk.ac.ncl.tongzhou.enterprisemiddleware.customer.CustomerRestService;
+import uk.ac.ncl.tongzhou.enterprisemiddleware.flight.FlightRestService;
 
 /**
  * A class extending {@link Application} and annotated with @ApplicationPath is
@@ -56,8 +57,8 @@ public class ContactServiceApplication extends Application {
 		// Add additional RESTService containing packages here, separated by commas:
 		// "org.jboss.quickstarts.wfk.contact," +
 		// "org.jboss.quickstarts.wfk.other"
-//		beanConfig.setResourcePackage("org.jboss.quickstarts.wfk.contact,uk.ac.ncl.tongzhou.enterprisemiddleware");
-		 beanConfig.setResourcePackage("uk.ac.ncl.tongzhou.enterprisemiddleware");
+		// beanConfig.setResourcePackage("org.jboss.quickstarts.wfk.contact,uk.ac.ncl.tongzhou.enterprisemiddleware");
+		beanConfig.setResourcePackage("uk.ac.ncl.tongzhou.enterprisemiddleware");
 
 		beanConfig.setScan(true);
 
@@ -70,10 +71,10 @@ public class ContactServiceApplication extends Application {
 		Set<Class<?>> services = new HashSet<>();
 
 		// Add RESTful resources here as you create them
-//		services.add(ContactRestService.class);
+		// services.add(ContactRestService.class);
 		services.add(FlightRestService.class);
 		services.add(CustomerRestService.class);
-		services.add(BookingRestService.class);
+		// services.add(BookingRestService.class);
 
 		// Do not edit below
 		services.add(RestServiceExceptionHandler.class);
