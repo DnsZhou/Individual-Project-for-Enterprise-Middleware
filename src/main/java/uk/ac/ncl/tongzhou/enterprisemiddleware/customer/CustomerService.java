@@ -66,7 +66,7 @@ public class CustomerService {
 	 * <p>
 	 * Returns a List of all persisted {@link Customer} objects, sorted
 	 * alphabetically by last name.
-	 * <p/>
+	 * </p>
 	 *
 	 * @return List of Customer objects
 	 */
@@ -77,12 +77,12 @@ public class CustomerService {
 	/**
 	 * <p>
 	 * Writes the provided Customer object to the application database.
-	 * <p/>
+	 * </p>
 	 *
 	 * <p>
 	 * Validates the data in the provided Customer object using a
 	 * {@link CustomerValidator} object.
-	 * <p/>
+	 * </p>
 	 *
 	 * @param customer
 	 *            The Customer object to be written to the database using a
@@ -94,7 +94,7 @@ public class CustomerService {
 	 */
 	Customer create(Customer customer) throws ConstraintViolationException, ValidationException, Exception {
 		log.info("CustomerService.create() - Creating " + customer.getName());
-		
+
 		// Check to make sure the data fits with the parameters in the Customer model
 		// and passes validation.
 		validator.validateCustomer(customer);
@@ -103,4 +103,16 @@ public class CustomerService {
 		return crud.create(customer);
 	}
 
+	/**
+	 * <p>
+	 * Returns a single Customer object, specified by a Long id.
+	 * </p>
+	 *
+	 * @param id
+	 *            The id field of the Customer to be returned
+	 * @return The Customer with the specified id
+	 */
+	public Customer findById(Long id) {
+		return crud.findById(id);
+	}
 }

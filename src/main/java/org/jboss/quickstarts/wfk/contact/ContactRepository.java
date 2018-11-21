@@ -30,10 +30,10 @@ import java.util.logging.Logger;
 
 /**
  * <p>This is a Repository class and connects the Service/Control layer (see {@link ContactService} with the
- * Domain/Entity Object (see {@link Contact}).<p/>
+ * Domain/Entity Object (see {@link Contact}).</p>
  *
  * <p>There are no access modifiers on the methods making them 'package' scope.  They should only be accessed by a
- * Service/Control object.<p/>
+ * Service/Control object.</p>
  *
  * @author Joshua Wilson
  * @see Contact
@@ -58,7 +58,7 @@ public class ContactRepository {
     }
 
     /**
-     * <p>Returns a single Contact object, specified by a Long id.<p/>
+     * <p>Returns a single Contact object, specified by a Long id.</p>
      *
      * @param id The id field of the Contact to be returned
      * @return The Contact with the specified id
@@ -70,7 +70,7 @@ public class ContactRepository {
     /**
      * <p>Returns a single Contact object, specified by a String email.</p>
      *
-     * <p>If there is more than one Contact with the specified email, only the first encountered will be returned.<p/>
+     * <p>If there is more than one Contact with the specified email, only the first encountered will be returned.</p>
      *
      * @param email The email field of the Contact to be returned
      * @return The first Contact with the specified email
@@ -81,7 +81,7 @@ public class ContactRepository {
     }
 
     /**
-     * <p>Returns a list of Contact objects, specified by a String firstName.<p/>
+     * <p>Returns a list of Contact objects, specified by a String firstName.</p>
      *
      * @param firstName The firstName field of the Contacts to be returned
      * @return The Contacts with the specified firstName
@@ -97,7 +97,7 @@ public class ContactRepository {
     }
 
     /**
-     * <p>Returns a single Contact object, specified by a String lastName.<p/>
+     * <p>Returns a single Contact object, specified by a String lastName.</p>
      *
      * @param lastName The lastName field of the Contacts to be returned
      * @return The Contacts with the specified lastName

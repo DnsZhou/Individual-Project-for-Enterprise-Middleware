@@ -94,7 +94,7 @@ public class ContactRestService {
     }
 
     /**
-     * <p>Search for and return a Contact identified by email address.<p/>
+     * <p>Search for and return a Contact identified by email address.</p>
      *
      * <p>Path annotation includes very simple regex to differentiate between email addresses and Ids.
      * <strong>DO NOT</strong> attempt to use this regex to validate email addresses.</p>

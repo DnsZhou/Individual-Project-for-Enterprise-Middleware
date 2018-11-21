@@ -42,7 +42,7 @@ public class ContactValidator {
 
     /**
      * <p>Validates the given Contact object and throws validation exceptions based on the type of error. If the error is standard
-     * bean validation errors then it will throw a ConstraintValidationException with the set of the constraints violated.<p/>
+     * bean validation errors then it will throw a ConstraintValidationException with the set of the constraints violated.</p>
      *
      *
      * <p>If the error is caused because an existing contact with the same email is registered it throws a regular validation

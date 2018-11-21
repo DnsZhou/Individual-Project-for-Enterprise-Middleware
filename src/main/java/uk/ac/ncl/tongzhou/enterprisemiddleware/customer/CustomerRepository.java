@@ -20,12 +20,12 @@ import javax.validation.ValidationException;
  * <p>
  * This is a Repository class and connects the Service/Control layer (see
  * {@link CustomerService} with the Domain/Entity Object (see {@link Customer}).
- * <p/>
+ * </p>
  *
  * <p>
  * There are no access modifiers on the methods making them 'package' scope.
  * They should only be accessed by a Service/Control object.
- * <p/>
+ * </p>
  *
  * @author Tong Zhou
  * @see Customer
@@ -91,7 +91,7 @@ public class CustomerRepository {
 	 * <p>
 	 * If there is more than one Customer with the specified email, only the first
 	 * encountered will be returned.
-	 * <p/>
+	 * </p>
 	 *
 	 * @param email
 	 *            The email field of the Customer to be returned
@@ -106,7 +106,7 @@ public class CustomerRepository {
 	/**
 	 * <p>
 	 * Returns a single Customer object, specified by a Long id.
-	 * <p/>
+	 * </p>
 	 *
 	 * @param id
 	 *            The id field of the Customer to be returned

@@ -34,7 +34,7 @@ import uk.ac.ncl.tongzhou.enterprisemiddleware.flight.Flight;
  * The class also specifies how a flights are retrieved from the database
  * (with @NamedQueries), and acceptable values for Flight fields
  * (with @NotNull, @Pattern etc...)
- * <p/>
+ * </p>
  *
  * @author Tong Zhou
  */
@@ -62,7 +62,7 @@ public class Flight implements Serializable {
 
 	// Flight number: a non-empty alpha-numerical string which is 5 characters in
 	// length.
-	@NotNull
+	@NotNull(message = "Flight Number could not be empty")
 	@Size(min = 5, max = 5)
 	@Pattern(regexp = "[A-Za-z0-9]{5}+", message = "Please use a non-empty alpha-numerical string which is 5 characters in length")
 	@Column(name = "number")
@@ -70,7 +70,7 @@ public class Flight implements Serializable {
 
 	// Flight point of departure: a non-empty alphabetical string, which is upper
 	// case and 3 characters in length.
-	@NotNull
+	@NotNull(message = "Point Of Departure could not be empty")
 	@Size(min = 3, max = 3)
 	@Pattern(regexp = "[A-Z]{3}+", message = "Please use a non-empty alphabetical string, which is upper case and 3 characters in length")
 	@Column(name = "point_of_departure")
@@ -78,7 +78,7 @@ public class Flight implements Serializable {
 
 	// Flight destination: a non-empty alphabetical string, which is upper case, 3
 	// characters in length and different from its point of departure.
-	@NotNull
+	@NotNull(message = "Destination could not be empty")
 	@Size(min = 3, max = 3)
 	@Pattern(regexp = "[A-Z]+", message = "Please use a non-empty alphabetical string, which is upper case, 3 characters in length and different from its point of departure")
 	@Column(name = "destination")

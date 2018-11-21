@@ -46,7 +46,7 @@ public class ContactServiceApplication extends Application {
 
 	public ContactServiceApplication() {
 		BeanConfig beanConfig = new BeanConfig();
-		beanConfig.setVersion("0.2.1");
+		beanConfig.setVersion("0.2.2");
 		beanConfig.setSchemes(new String[] { "http" });
 		// We may no longer need to change this
 		// beanConfig.setHost("localhost:8080/jboss-contacts-swagger");
@@ -56,8 +56,8 @@ public class ContactServiceApplication extends Application {
 		// Add additional RESTService containing packages here, separated by commas:
 		// "org.jboss.quickstarts.wfk.contact," +
 		// "org.jboss.quickstarts.wfk.other"
-		beanConfig.setResourcePackage("org.jboss.quickstarts.wfk.contact,uk.ac.ncl.tongzhou.enterprisemiddleware");
-		// beanConfig.setResourcePackage("uk.ac.ncl.tongzhou.enterprisemiddleware");
+//		beanConfig.setResourcePackage("org.jboss.quickstarts.wfk.contact,uk.ac.ncl.tongzhou.enterprisemiddleware");
+		 beanConfig.setResourcePackage("uk.ac.ncl.tongzhou.enterprisemiddleware");
 
 		beanConfig.setScan(true);
 
@@ -70,7 +70,7 @@ public class ContactServiceApplication extends Application {
 		Set<Class<?>> services = new HashSet<>();
 
 		// Add RESTful resources here as you create them
-		services.add(ContactRestService.class);
+//		services.add(ContactRestService.class);
 		services.add(FlightRestService.class);
 		services.add(CustomerRestService.class);
 		services.add(BookingRestService.class);

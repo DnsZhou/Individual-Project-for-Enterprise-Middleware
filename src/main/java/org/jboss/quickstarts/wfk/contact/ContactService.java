@@ -71,7 +71,7 @@ public class ContactService {
     }
 
     /**
-     * <p>Returns a List of all persisted {@link Contact} objects, sorted alphabetically by last name.<p/>
+     * <p>Returns a List of all persisted {@link Contact} objects, sorted alphabetically by last name.</p>
      *
      * @return List of Contact objects
      */
@@ -80,7 +80,7 @@ public class ContactService {
     }
 
     /**
-     * <p>Returns a single Contact object, specified by a Long id.<p/>
+     * <p>Returns a single Contact object, specified by a Long id.</p>
      *
      * @param id The id field of the Contact to be returned
      * @return The Contact with the specified id
@@ -92,7 +92,7 @@ public class ContactService {
     /**
      * <p>Returns a single Contact object, specified by a String email.</p>
      *
-     * <p>If there is more than one Contact with the specified email, only the first encountered will be returned.<p/>
+     * <p>If there is more than one Contact with the specified email, only the first encountered will be returned.</p>
      *
      * @param email The email field of the Contact to be returned
      * @return The first Contact with the specified email
@@ -102,7 +102,7 @@ public class ContactService {
     }
 
     /**
-     * <p>Returns a single Contact object, specified by a String firstName.<p/>
+     * <p>Returns a single Contact object, specified by a String firstName.</p>
      *
      * @param firstName The firstName field of the Contact to be returned
      * @return The first Contact with the specified firstName
@@ -112,7 +112,7 @@ public class ContactService {
     }
 
     /**
-     * <p>Returns a single Contact object, specified by a String lastName.<p/>
+     * <p>Returns a single Contact object, specified by a String lastName.</p>
      *
      * @param lastName The lastName field of the Contacts to be returned
      * @return The Contacts with the specified lastName
@@ -122,9 +122,9 @@ public class ContactService {
     }
 
     /**
-     * <p>Writes the provided Contact object to the application database.<p/>
+     * <p>Writes the provided Contact object to the application database.</p>
      *
-     * <p>Validates the data in the provided Contact object using a {@link ContactValidator} object.<p/>
+     * <p>Validates the data in the provided Contact object using a {@link ContactValidator} object.</p>
      *
      * @param contact The Contact object to be written to the database using a {@link ContactRepository} object
      * @return The Contact object that has been successfully written to the application database
@@ -156,9 +156,9 @@ public class ContactService {
     }
 
     /**
-     * <p>Updates an existing Contact object in the application database with the provided Contact object.<p/>
+     * <p>Updates an existing Contact object in the application database with the provided Contact object.</p>
      *
-     * <p>Validates the data in the provided Contact object using a ContactValidator object.<p/>
+     * <p>Validates the data in the provided Contact object using a ContactValidator object.</p>
      *
      * @param contact The Contact object to be passed as an update to the application database
      * @return The Contact object that has been successfully updated in the application database
@@ -190,7 +190,7 @@ public class ContactService {
     }
 
     /**
-     * <p>Deletes the provided Contact object from the application database if found there.<p/>
+     * <p>Deletes the provided Contact object from the application database if found there.</p>
      *
      * @param contact The Contact object to be removed from the application database
      * @return The Contact object that has been successfully removed from the application database; or null

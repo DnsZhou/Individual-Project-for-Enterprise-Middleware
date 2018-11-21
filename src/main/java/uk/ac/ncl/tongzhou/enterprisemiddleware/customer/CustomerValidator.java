@@ -39,7 +39,20 @@ public class CustomerValidator {
 
 	@Inject
 	private CustomerRepository crud;
-
+	
+	/**
+     * <p>Validates the given Customer object and throws validation exceptions based on the type of error. If the error is standard
+     * bean validation errors then it will throw a ConstraintValidationException with the set of the constraints violated.</p>
+     *
+     *
+     * <p>If the error is caused because an existing customer with the same email is registered it throws a regular validation
+     * exception so that it can be interpreted separately.</p>
+     *
+     *
+     * @param customer The Customer object to be validated
+     * @throws ConstraintViolationException If Bean Validation errors exist
+     * @throws ValidationException If customer with the same email already exists
+     */
 	void validateCustomer(Customer customer) throws ConstraintViolationException, ValidationException {
 		// Create a bean validator and check for issues.
 		Set<ConstraintViolation<Customer>> violations = validator.validate(customer);

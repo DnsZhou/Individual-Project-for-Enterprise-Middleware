@@ -37,7 +37,7 @@ import org.jboss.quickstarts.wfk.contact.Contact;
  * The class also specifies how a flights are retrieved from the database
  * (with @NamedQueries), and acceptable values for Customer fields
  * (with @NotNull, @Pattern etc...)
- * <p/>
+ * </p>
  *
  * @author Tong Zhou
  */
@@ -62,19 +62,19 @@ public class Customer implements Serializable {
 	@GeneratedValue(strategy = GenerationType.TABLE)
 	private Long id;
 
-	@NotNull
+	@NotNull(message = "Name could not be empty")
 	@Size(min = 1, max = 50)
 	@Pattern(regexp = "[A-Za-z-' ]+", message = "Please use a customer name without numbers or specials")
 	@Column(name = "customer_name")
 	private String customerName;
 
 	@NotNull
-	@NotEmpty
+	@NotEmpty(message = "Email could not be empty")
 	@Email(message = "The email address must be in the format of name@domain.com")
 	// @Column(name = "email")
 	private String email;
 
-	@NotNull
+	@NotNull(message = "Phone number could not be empty")
 	@Pattern(regexp = "0[0-9]{10}")
 	@Column(name = "phone_number")
 	private String phoneNumber;

@@ -34,7 +34,7 @@ import java.util.Objects;
  * database.</p>
  *
  * <p>The class also specifies how a contacts are retrieved from the database (with @NamedQueries), and acceptable values
- * for Contact fields (with @NotNull, @Pattern etc...)<p/>
+ * for Contact fields (with @NotNull, @Pattern etc...)</p>
  *
  * @author Joshua Wilson
  */

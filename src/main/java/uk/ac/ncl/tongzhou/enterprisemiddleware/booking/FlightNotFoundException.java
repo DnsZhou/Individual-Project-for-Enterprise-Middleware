@@ -16,29 +16,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.quickstarts.wfk.contact;
+package uk.ac.ncl.tongzhou.enterprisemiddleware.booking;
 
 import javax.validation.ValidationException;
 
+import uk.ac.ncl.tongzhou.enterprisemiddleware.customer.Customer;
+
 /**
- * <p>ValidationException caused if a Contact's email address conflicts with that of another Contact.</p>
+ * <p>ValidationException caused if a Booking's Flight ID not found in system</p>
  *
  * <p>This violates the uniqueness constraint.</p>
  *
- * @author hugofirth
- * @see Contact
+ * @author Tong Zhou
+ * @see Customer
  */
-public class UniqueEmailException extends ValidationException {
+public class FlightNotFoundException extends ValidationException {
 
-    public UniqueEmailException(String message) {
+    public FlightNotFoundException(String message) {
         super(message);
     }
 
-    public UniqueEmailException(String message, Throwable cause) {
+    public FlightNotFoundException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public UniqueEmailException(Throwable cause) {
+    public FlightNotFoundException(Throwable cause) {
         super(cause);
     }
 }

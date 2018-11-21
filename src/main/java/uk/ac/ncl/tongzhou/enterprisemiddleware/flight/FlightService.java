@@ -64,7 +64,7 @@ public class FlightService {
 	 * <p>
 	 * Returns a List of all persisted {@link Flight} objects, sorted alphabetically
 	 * by last name.
-	 * <p/>
+	 * </p>
 	 *
 	 * @return List of Flight objects
 	 */
@@ -75,12 +75,12 @@ public class FlightService {
 	/**
 	 * <p>
 	 * Writes the provided Flight object to the application database.
-	 * <p/>
+	 * </p>
 	 *
 	 * <p>
 	 * Validates the data in the provided Flight object using a
 	 * {@link FlightValidator} object.
-	 * <p/>
+	 * </p>
 	 *
 	 * @param flight
 	 *            The Flight object to be written to the database using a
@@ -99,5 +99,18 @@ public class FlightService {
 
 		// Write the flight to the database.
 		return crud.create(flight);
+	}
+
+	/**
+	 * <p>
+	 * Returns a single Flight object, specified by a Long id.
+	 * </p>
+	 *
+	 * @param id
+	 *            The id field of the Flight to be returned
+	 * @return The Flight with the specified id
+	 */
+	public Flight findById(Long id) {
+		return crud.findById(id);
 	}
 }

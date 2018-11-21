@@ -7,6 +7,8 @@
 package uk.ac.ncl.tongzhou.enterprisemiddleware.booking;
 
 import java.io.Serializable;
+import java.util.Date;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,13 +18,14 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hibernate.validator.constraints.NotEmpty;
-
-import uk.ac.ncl.tongzhou.enterprisemiddleware.booking.Booking;
 
 /**
  * <p>
@@ -34,34 +37,35 @@ import uk.ac.ncl.tongzhou.enterprisemiddleware.booking.Booking;
  * The class also specifies how a flights are retrieved from the database
  * (with @NamedQueries), and acceptable values for Booking fields
  * (with @NotNull, @Pattern etc...)
- * <p/>
+ * </p>
  *
  * @author Tong Zhou
  */
 @Entity
-@NamedQueries({
-	@NamedQuery(name = Booking.FIND_ALL, query = "SELECT c FROM Booking c ORDER BY c.id ASC")
-})
+@NamedQueries({ @NamedQuery(name = Booking.FIND_ALL, query = "SELECT c FROM Booking c ORDER BY c.id ASC") })
 @XmlRootElement
 @Table(name = "booking", uniqueConstraints = @UniqueConstraint(columnNames = "id"))
 public class Booking implements Serializable {
 	private static final long serialVersionUID = 1L;
-	
+
 	public static final String FIND_ALL = "Booking.findAll";
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE)
 	private Long id;
 
-	@NotNull
-	@NotEmpty
+	@NotNull(message = "Customer Id could not be empty")
 	@Column(name = "customer_id")
-	private String customerId;
+	private Long customerId;
 
-	@NotNull
-	@NotEmpty
+	@NotNull(message = "Flight Id could not be empty")
 	@Column(name = "flight_id")
-	private String flightId;
+	private Long flightId;
+
+	@NotNull(message = "Booking date could not be empty")
+	@Column(name = "booking_date")
+	@Temporal(TemporalType.DATE)
+	private Date bookingDate;
 
 	/**
 	 * Return the id.
@@ -83,22 +87,22 @@ public class Booking implements Serializable {
 	}
 
 	/**
-	 * Return the bookingId.
+	 * Return the customerId.
 	 *
-	 * @return bookingId
+	 * @return customerId
 	 */
-	public String getBookingId() {
+	public Long getCustomerId() {
 		return customerId;
 	}
 
 	/**
-	 * Set the value of bookingId
+	 * Set the value of customerId
 	 *
-	 * @param bookingId:
-	 *            bookingId to be set.
+	 * @param customerId:
+	 *            customerId to be set.
 	 */
-	public void setBookingId(String bookingId) {
-		this.customerId = bookingId;
+	public void setCustomerId(Long customerId) {
+		this.customerId = customerId;
 	}
 
 	/**
@@ -106,7 +110,7 @@ public class Booking implements Serializable {
 	 *
 	 * @return flightId
 	 */
-	public String getFlightId() {
+	public Long getFlightId() {
 		return flightId;
 	}
 
@@ -116,8 +120,55 @@ public class Booking implements Serializable {
 	 * @param flightId:
 	 *            flightId to be set.
 	 */
-	public void setFlightId(String flightId) {
+	public void setFlightId(Long flightId) {
 		this.flightId = flightId;
+	}
+
+	/**
+	 * Return the bookingDate.
+	 *
+	 * @return bookingDate
+	 */
+	public Date getBookingDate() {
+		return bookingDate;
+	}
+
+	/**
+	 * Set the value of bookingDate
+	 *
+	 * @param bookingDate:
+	 *            bookingDate to be set.
+	 */
+	public void setBookingDate(Date bookingDate) {
+		this.bookingDate = bookingDate;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (!(o instanceof Booking))
+			return false;
+		Booking booking = (Booking) o;
+		if (!id.equals(booking.id))
+			return false;
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(id);
+	}
+
+	/**
+	 * toString
+	 * 
+	 * @return
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "Booking [id=" + id + ", flightId=" + flightId + ", bookingDate=" + bookingDate + "]";
 	}
 
 }

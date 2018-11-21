@@ -40,7 +40,7 @@ import static org.junit.Assert.*;
 /**
  * <p>A suite of tests, run with {@link org.jboss.arquillian Arquillian} to test the JAX-RS endpoint for
  * Contact creation functionality
- * (see {@link ContactRestService#createContact(Contact) createContact(Contact)}).<p/>
+ * (see {@link ContactRestService#createContact(Contact) createContact(Contact)}).</p>
  *
  * @author balunasj
  * @author Joshua Wilson

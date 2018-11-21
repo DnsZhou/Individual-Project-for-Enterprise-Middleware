@@ -43,6 +43,18 @@ public class FlightValidator {
 	@Inject
 	private FlightRepository crud;
 
+	/**
+     * <p>Validates the given Flight object and throws validation exceptions based on the type of error. If the error is standard
+     * bean validation errors then it will throw a ConstraintValidationException with the set of the constraints violated.</p>
+     *
+     *
+     * <p>If the error is caused because an existing flight with the same email is registered it throws a regular validation
+     * exception so that it can be interpreted separately.</p>
+     *
+     *
+     * @param flight The Flight object to be validated
+     * @throws ConstraintViolationException If Bean Validation errors exist
+     */
 	void validateFlight(Flight flight) throws ConstraintViolationException, ValidationException {
 		// Create a bean validator and check for issues.
 		Set<ConstraintViolation<Flight>> violations = validator.validate(flight);

@@ -78,7 +78,7 @@ public class FlightRestService {
 
 	/**
 	 * <p>
-	 * Return all the Flights. They are sorted alphabetically by Number.
+	 * Return all the Flights. They are sorted alphabetically by number.
 	 * </p>
 	 *
 	 * <p>
@@ -110,7 +110,7 @@ public class FlightRestService {
 	 * fields, and related errors.
 	 * </p>
 	 *
-	 * @param Flight
+	 * @param flight
 	 *            The Flight object, constructed automatically from JSON input, to
 	 *            be <i>created</i> via {@link FlightService#create(Flight)}
 	 * @return A Response indicating the outcome of the create operation
@@ -119,12 +119,11 @@ public class FlightRestService {
 	@ApiOperation(value = "Add a new Flight to the database")
 	@ApiResponses(value = { @ApiResponse(code = 201, message = "Flight created successfully."),
 			@ApiResponse(code = 400, message = "Invalid Flight supplied in request body"),
-			@ApiResponse(code = 409, message = "Flight supplied in request body conflicts with an existing Flight"),
 			@ApiResponse(code = 500, message = "An unexpected error occurred whilst processing the request") })
 	public Response createFlight(
-			@ApiParam(value = "JSON representation of Flight object to be added to the database", required = true) Flight Flight) {
+			@ApiParam(value = "JSON representation of Flight object to be added to the database", required = true) Flight flight) {
 
-		if (Flight == null) {
+		if (flight == null) {
 			throw new RestServiceException("Bad Request", Response.Status.BAD_REQUEST);
 		}
 
@@ -132,11 +131,11 @@ public class FlightRestService {
 
 		try {
 			// Go add the new Flight.
-			service.create(Flight);
+			service.create(flight);
 
 			// Create a "Resource Created" 201 Response and pass the Flight back in case
 			// it is needed.
-			builder = Response.status(Response.Status.CREATED).entity(Flight);
+			builder = Response.status(Response.Status.CREATED).entity(flight);
 
 		} catch (ConstraintViolationException ce) {
 			// Handle bean validation issues
@@ -158,7 +157,7 @@ public class FlightRestService {
 			throw new RestServiceException(e);
 		}
 
-		log.info("createFlight completed. Flight = " + Flight.toString());
+		log.info("createFlight completed. Flight = " + flight.toString());
 		return builder.build();
 	}
 }

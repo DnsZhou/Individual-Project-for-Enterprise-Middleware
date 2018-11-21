@@ -16,18 +16,16 @@ import javax.persistence.TypedQuery;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 
-import uk.ac.ncl.tongzhou.enterprisemiddleware.flight.Flight;
-
 /**
  * <p>
  * This is a Repository class and connects the Service/Control layer (see
  * {@link FlightService} with the Domain/Entity Object (see {@link Flight}).
- * <p/>
+ * </p>
  *
  * <p>
  * There are no access modifiers on the methods making them 'package' scope.
  * They should only be accessed by a Service/Control object.
- * <p/>
+ * </p>
  *
  * @author Tong Zhou
  * @see Flight
@@ -52,7 +50,20 @@ public class FlightRepository {
 		TypedQuery<Flight> query = em.createNamedQuery(Flight.FIND_ALL, Flight.class);
 		return query.getResultList();
 	}
-	
+
+	/**
+	 * <p>
+	 * Returns a single Flight object, specified by a Long id.
+	 * </p>
+	 *
+	 * @param id
+	 *            The id field of the Flight to be returned
+	 * @return The Flight with the specified id
+	 */
+	Flight findById(Long id) {
+		return em.find(Flight.class, id);
+	}
+
 	/**
 	 * <p>
 	 * Persists the provided Flight object to the application database using the
@@ -83,4 +94,5 @@ public class FlightRepository {
 
 		return flight;
 	}
+
 }
