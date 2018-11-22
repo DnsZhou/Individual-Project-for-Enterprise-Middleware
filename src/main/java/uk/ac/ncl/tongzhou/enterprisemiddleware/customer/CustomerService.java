@@ -92,7 +92,7 @@ public class CustomerService {
 	 * @throws ConstraintViolationException,
 	 *             ValidationException, Exception
 	 */
-	Customer create(Customer customer) throws ConstraintViolationException, ValidationException, Exception {
+	public Customer create(Customer customer) throws ConstraintViolationException, ValidationException, Exception {
 		log.info("CustomerService.create() - Creating " + customer.getCustomerName());
 
 		// Check to make sure the data fits with the parameters in the Customer model

@@ -11,9 +11,13 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.annotation.Resource;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionManagement;
+import javax.ejb.TransactionManagementType;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.transaction.UserTransaction;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.Consumes;
@@ -39,7 +43,7 @@ import uk.ac.ncl.tongzhou.enterprisemiddleware.booking.FlightAndDateExistsExcept
 import uk.ac.ncl.tongzhou.enterprisemiddleware.booking.FlightNotFoundException;
 import uk.ac.ncl.tongzhou.enterprisemiddleware.customer.CustomerRestService;
 import uk.ac.ncl.tongzhou.enterprisemiddleware.customer.CustomerService;
-import uk.ac.ncl.tongzhou.enterprisemiddleware.flight.Flight;
+import uk.ac.ncl.tongzhou.enterprisemiddleware.customer.UniqueEmailException;
 import uk.ac.ncl.tongzhou.enterprisemiddleware.flight.FlightService;
 
 /**
@@ -68,16 +72,13 @@ public class GuestBookingRestService {
 	private @Named("logger") Logger log;
 
 	@Inject
-	private BookingRestService bookingRestService;
+	private BookingService bookingService;
 
 	@Inject
 	private CustomerRestService customerRestService;
 
-	// @Inject
-	// private CustomerService customerService;
-	//
-	// @Inject
-	// private FlightRestService flightRestService;
+	@Inject
+	private CustomerService customerService;
 
 	@Inject
 	private FlightService flightService;
@@ -101,6 +102,7 @@ public class GuestBookingRestService {
 	@ApiOperation(value = "Add a new Booking to the database")
 	@ApiResponses(value = { @ApiResponse(code = 201, message = "Guest Booking created successfully."),
 			@ApiResponse(code = 400, message = "Invalid Booking supplied in request body"),
+			@ApiResponse(code = 409, message = "Customer supplied in request body conflicts with an existing Customer"),
 			@ApiResponse(code = 500, message = "An unexpected error occurred whilst processing the request") })
 	public Response createGuestBooking(
 			@ApiParam(value = "JSON representation of Customer object to be added to the database", required = true) GuestBooking guestbooking) {
@@ -113,13 +115,12 @@ public class GuestBookingRestService {
 
 		try {
 			// userTransaction.begin();
-
-			customerRestService.createCustomer(guestbooking.getCustomer());
+			customerService.create(guestbooking.getCustomer());
 			BookingDto booking = new BookingDto();
 			booking.setCustomerId(guestbooking.getCustomer().getId());
 			booking.setFlightId(guestbooking.getFlightId());
 			booking.setBookingDate(guestbooking.getBookingDate());
-			bookingRestService.createBooking(booking);
+			bookingService.create(booking);
 
 			// userTransaction.commit();
 
@@ -179,6 +180,11 @@ public class GuestBookingRestService {
 			// }
 			Logger.getLogger(BookingRestService.class.getName()).log(Level.SEVERE,
 					"Failed to create Guest Booking, transaction rolled back", e);
+			throw new RestServiceException("Bad Request", responseObj, Response.Status.CONFLICT, e);
+		} catch (UniqueEmailException e) {
+			// Handle the unique constraint violation
+			Map<String, String> responseObj = new HashMap<>();
+			responseObj.put("email", "That email is already used, please use a unique email");
 			throw new RestServiceException("Bad Request", responseObj, Response.Status.CONFLICT, e);
 		} catch (Exception e) {
 			// Handle generic exceptions

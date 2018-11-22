@@ -101,7 +101,7 @@ public class BookingService {
 	 * @throws ConstraintViolationException,
 	 *             ValidationException, Exception
 	 */
-	Booking create(BookingDto bookingDto) throws ConstraintViolationException, ValidationException, Exception {
+	public Booking create(BookingDto bookingDto) throws ConstraintViolationException, ValidationException, Exception {
 		log.info("BookingService.create() - Creating Booking-" + bookingDto);
 
 		// Check to make sure the data fits with the parameters in the Booking model and
