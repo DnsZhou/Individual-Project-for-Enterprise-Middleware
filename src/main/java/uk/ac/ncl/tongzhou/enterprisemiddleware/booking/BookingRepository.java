@@ -20,6 +20,9 @@ import javax.persistence.criteria.Root;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 
+import uk.ac.ncl.tongzhou.enterprisemiddleware.flight.Flight;
+import uk.ac.ncl.tongzhou.enterprisemiddleware.flight.FlightService;
+
 /**
  * <p>
  * This is a Repository class and connects the Service/Control layer (see
@@ -42,6 +45,9 @@ public class BookingRepository {
 
 	@Inject
 	private EntityManager em;
+
+	@Inject
+	private FlightService flightService;
 
 	/**
 	 * <p>
@@ -148,19 +154,19 @@ public class BookingRepository {
 	 * @return the result with the flightId provided
 	 */
 	public List<Booking> findAllByFlightId(Long flightId) {
+		Flight flight = flightService.findById(flightId);
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<Booking> criteria = cb.createQuery(Booking.class);
 		Root<Booking> booking = criteria.from(Booking.class);
-		criteria.select(booking).where(cb.equal(booking.get("flightId"), flightId));
+		criteria.select(booking).where(cb.equal(booking.get("flight"), flight));
 		return em.createQuery(criteria).getResultList();
 	}
 
-	
-	/**   
-	 *  findAllByBookingDate   
+	/**
+	 * findAllByBookingDate
 	 * 
 	 * @param bookingDate
-	 * @return the result with the bookingDate provided        
+	 * @return the result with the bookingDate provided
 	 */
 	public List<Booking> findAllByBookingDate(Date bookingDate) {
 		CriteriaBuilder cb = em.getCriteriaBuilder();

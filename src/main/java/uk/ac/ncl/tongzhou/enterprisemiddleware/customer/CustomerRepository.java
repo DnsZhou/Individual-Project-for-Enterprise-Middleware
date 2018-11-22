@@ -16,8 +16,6 @@ import javax.persistence.TypedQuery;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 
-import uk.ac.ncl.tongzhou.enterprisemiddleware.customer.Customer;
-
 /**
  * <p>
  * This is a Repository class and connects the Service/Control layer (see
@@ -118,7 +116,7 @@ public class CustomerRepository {
 	Customer findById(Long id) {
 		return em.find(Customer.class, id);
 	}
-	
+
 	/**
 	 * <p>
 	 * Deletes the provided Customer object from the application database if found

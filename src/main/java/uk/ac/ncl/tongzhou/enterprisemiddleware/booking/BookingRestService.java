@@ -12,14 +12,9 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.annotation.Resource;
 import javax.ejb.Stateless;
-import javax.ejb.TransactionManagement;
-import javax.ejb.TransactionManagementType;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.transaction.SystemException;
-import javax.transaction.UserTransaction;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.Consumes;
@@ -75,7 +70,7 @@ import io.swagger.annotations.ApiResponses;
 @Produces(MediaType.APPLICATION_JSON)
 @Api(value = "/bookings", description = "Operations about bookings")
 @Stateless
-@TransactionManagement(TransactionManagementType.BEAN)
+//@TransactionManagement(TransactionManagementType.BEAN)
 public class BookingRestService {
 	@Inject
 	private @Named("logger") Logger log;
@@ -83,8 +78,6 @@ public class BookingRestService {
 	@Inject
 	private BookingService service;
 
-	@Resource
-	private UserTransaction userTransaction;
 
 	/**
 	 * <p>
@@ -131,7 +124,7 @@ public class BookingRestService {
 			@ApiResponse(code = 400, message = "Invalid Booking supplied in request body"),
 			@ApiResponse(code = 500, message = "An unexpected error occurred whilst processing the request") })
 	public Response createBooking(
-			@ApiParam(value = "JSON representation of Booking object to be added to the database", required = true) Booking booking) {
+			@ApiParam(value = "JSON representation of Booking object to be added to the database", required = true) BookingDto booking) {
 
 		if (booking == null) {
 			throw new RestServiceException("Bad Request", Response.Status.BAD_REQUEST);
@@ -177,20 +170,6 @@ public class BookingRestService {
 			throw new RestServiceException(e);
 		}
 
-		try {
-			userTransaction.begin();
-
-			// TODO:
-
-			userTransaction.commit();
-		} catch (Exception ex) {
-			try {
-				userTransaction.rollback();
-			} catch (SystemException syex) {
-				Logger.getLogger(BookingRestService.class.getName()).log(Level.SEVERE, "Failed to rollback", syex);
-			}
-			Logger.getLogger(BookingRestService.class.getName()).log(Level.SEVERE, "Failed to create Booking", ex);
-		}
 
 		log.info("createBooking completed. Booking = " + booking.toString());
 		return builder.build();

@@ -18,6 +18,9 @@ import javax.validation.ValidationException;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 
+import uk.ac.ncl.tongzhou.enterprisemiddleware.customer.CustomerService;
+import uk.ac.ncl.tongzhou.enterprisemiddleware.flight.FlightService;
+
 /**
  * <p>
  * This Service assumes the Control responsibility in the ECB pattern.
@@ -42,11 +45,18 @@ import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 public class BookingService {
 	@Inject
 	private @Named("logger") Logger log;
+
 	@Inject
 	private BookingValidator validator;
 
 	@Inject
 	private BookingRepository crud;
+
+	@Inject
+	private CustomerService customerService;
+
+	@Inject
+	private FlightService flightService;
 
 	private ResteasyClient client;
 
@@ -72,7 +82,7 @@ public class BookingService {
 	List<Booking> findAllOrderedByName() {
 		return crud.findAllOrderedById();
 	}
-	
+
 	/**
 	 * <p>
 	 * Writes the provided Booking object to the application database.
@@ -91,66 +101,75 @@ public class BookingService {
 	 * @throws ConstraintViolationException,
 	 *             ValidationException, Exception
 	 */
-	Booking create(Booking booking) throws ConstraintViolationException, ValidationException, Exception {
-		log.info("BookingService.create() - Creating Booking-" + booking.getId());
+	Booking create(BookingDto bookingDto) throws ConstraintViolationException, ValidationException, Exception {
+		log.info("BookingService.create() - Creating Booking-" + bookingDto);
 
 		// Check to make sure the data fits with the parameters in the Booking model and
 		// passes validation.
-		validator.validateBooking(booking);
+		validator.validateBooking(bookingDto);
 
+		Booking booking = new Booking();
+		booking.setBookingDate(bookingDto.getBookingDate());
+		booking.setCustomer(customerService.findById(bookingDto.getCustomerId()));
+		booking.setFlight(flightService.findById(bookingDto.getFlightId()));
 		// Write the booking to the database.
 		return crud.create(booking);
 	}
 
-    /**
-     * <p>Returns a single Booking object, specified by a Long id.</p>
-     *
-     * @param id The id field of the Booking to be returned
-     * @return The Booking with the specified id
-     */
-    Booking findById(Long id) {
-        return crud.findById(id);
-    }
-    
-    /**
-     * <p>Deletes the provided Booking object from the application database if found there.</p>
-     *
-     * @param booking The Booking object to be removed from the application database
-     * @return The Booking object that has been successfully removed from the application database; or null
-     * @throws Exception
-     */
-    Booking delete(Booking booking) throws Exception {
-        log.info("delete() - Deleting " + booking.toString());
+	/**
+	 * <p>
+	 * Returns a single Booking object, specified by a Long id.
+	 * </p>
+	 *
+	 * @param id
+	 *            The id field of the Booking to be returned
+	 * @return The Booking with the specified id
+	 */
+	Booking findById(Long id) {
+		return crud.findById(id);
+	}
 
-        Booking deletedBooking = null;
+	/**
+	 * <p>
+	 * Deletes the provided Booking object from the application database if found
+	 * there.
+	 * </p>
+	 *
+	 * @param booking
+	 *            The Booking object to be removed from the application database
+	 * @return The Booking object that has been successfully removed from the
+	 *         application database; or null
+	 * @throws Exception
+	 */
+	Booking delete(Booking booking) throws Exception {
+		log.info("delete() - Deleting " + booking.toString());
 
-        if (booking.getId() != null) {
-            deletedBooking = crud.delete(booking);
-        } else {
-            log.info("delete() - No ID was found so can't Delete.");
-        }
+		Booking deletedBooking = null;
 
-        return deletedBooking;
-    }
+		if (booking.getId() != null) {
+			deletedBooking = crud.delete(booking);
+		} else {
+			log.info("delete() - No ID was found so can't Delete.");
+		}
 
-	
-	
-	/**   
-	 *  findAllByFlightId   
+		return deletedBooking;
+	}
+
+	/**
+	 * findAllByFlightId
 	 * 
 	 * @param flightId
-	 * @return the result with the flightId provided         
+	 * @return the result with the flightId provided
 	 */
-    List<Booking> findAllByFlightId(Long flightId) {
+	List<Booking> findAllByFlightId(Long flightId) {
 		return crud.findAllByFlightId(flightId);
 	}
-	
-	
-	/**   
-	 *  findAllByBookingDate   
+
+	/**
+	 * findAllByBookingDate
 	 * 
 	 * @param bookingDate
-	 * @return the result with the bookingDate provided       
+	 * @return the result with the bookingDate provided
 	 */
 	List<Booking> findAllByBookingDate(Date bookingDate) {
 		return crud.findAllByBookingDate(bookingDate);

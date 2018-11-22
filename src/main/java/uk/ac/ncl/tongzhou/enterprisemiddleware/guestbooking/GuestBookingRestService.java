@@ -31,11 +31,15 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import uk.ac.ncl.tongzhou.enterprisemiddleware.booking.Booking;
+import uk.ac.ncl.tongzhou.enterprisemiddleware.booking.BookingDto;
+import uk.ac.ncl.tongzhou.enterprisemiddleware.booking.BookingRestService;
 import uk.ac.ncl.tongzhou.enterprisemiddleware.booking.BookingService;
 import uk.ac.ncl.tongzhou.enterprisemiddleware.booking.CustomerNotFoundException;
 import uk.ac.ncl.tongzhou.enterprisemiddleware.booking.FlightAndDateExistsException;
 import uk.ac.ncl.tongzhou.enterprisemiddleware.booking.FlightNotFoundException;
+import uk.ac.ncl.tongzhou.enterprisemiddleware.customer.CustomerRestService;
 import uk.ac.ncl.tongzhou.enterprisemiddleware.customer.CustomerService;
+import uk.ac.ncl.tongzhou.enterprisemiddleware.flight.Flight;
 import uk.ac.ncl.tongzhou.enterprisemiddleware.flight.FlightService;
 
 /**
@@ -53,29 +57,39 @@ import uk.ac.ncl.tongzhou.enterprisemiddleware.flight.FlightService;
  * @see FlightService
  * @see javax.ws.rs.core.Response
  */
-@Path("/guestbooking")
+@Path("/guestbookings")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @Api(value = "/guestbookings", description = "Operations for guest bookings")
 @Stateless
+// @TransactionManagement(TransactionManagementType.BEAN)
 public class GuestBookingRestService {
 	@Inject
 	private @Named("logger") Logger log;
 
 	@Inject
-	private BookingService bookingService;
+	private BookingRestService bookingRestService;
 
 	@Inject
-	private CustomerService customerService;
+	private CustomerRestService customerRestService;
+
+	// @Inject
+	// private CustomerService customerService;
+	//
+	// @Inject
+	// private FlightRestService flightRestService;
 
 	@Inject
 	private FlightService flightService;
 
+	// @Resource
+	// private UserTransaction userTransaction;
+
 	/**
 	 * <p>
-	 * Creates a new Guest Booking from the values provided. Performs validation and will
-	 * return a JAX-RS response with either 201 (Resource created) or with a map of
-	 * fields, and related errors.
+	 * Creates a new Guest Booking from the values provided. Performs validation and
+	 * will return a JAX-RS response with either 201 (Resource created) or with a
+	 * map of fields, and related errors.
 	 * </p>
 	 *
 	 * @param guestBooking
@@ -85,58 +99,102 @@ public class GuestBookingRestService {
 	 */
 	@POST
 	@ApiOperation(value = "Add a new Booking to the database")
-	@ApiResponses(value = { @ApiResponse(code = 201, message = "Booking created successfully."),
+	@ApiResponses(value = { @ApiResponse(code = 201, message = "Guest Booking created successfully."),
 			@ApiResponse(code = 400, message = "Invalid Booking supplied in request body"),
 			@ApiResponse(code = 500, message = "An unexpected error occurred whilst processing the request") })
-	public Response createBooking(
-			@ApiParam(value = "JSON representation of Booking object to be added to the database", required = true) GuestBooking guestBooking) {
+	public Response createGuestBooking(
+			@ApiParam(value = "JSON representation of Customer object to be added to the database", required = true) GuestBooking guestbooking) {
 
-//		if (booking == null) {
-//			throw new RestServiceException("Bad Request", Response.Status.BAD_REQUEST);
-//		}
+		if (guestbooking == null) {
+			throw new RestServiceException("Bad Request", Response.Status.BAD_REQUEST);
+		}
 
 		Response.ResponseBuilder builder;
 
 		try {
-			// Go add the new Booking.
-//			service.create(booking);
+			// userTransaction.begin();
 
-			// Create a "Resource Created" 201 Response and pass the Booking back in case
-			// it is needed.
-//			builder = Response.status(Response.Status.CREATED).entity(booking);
+			customerRestService.createCustomer(guestbooking.getCustomer());
+			BookingDto booking = new BookingDto();
+			booking.setCustomerId(guestbooking.getCustomer().getId());
+			booking.setFlightId(guestbooking.getFlightId());
+			booking.setBookingDate(guestbooking.getBookingDate());
+			bookingRestService.createBooking(booking);
 
-		} catch (ConstraintViolationException ce) {
+			// userTransaction.commit();
+
+			builder = Response.status(Response.Status.CREATED).entity(booking);
+		} catch (ConstraintViolationException e) {
 			// Handle bean validation issues
 			Map<String, String> responseObj = new HashMap<>();
 
-			for (ConstraintViolation<?> violation : ce.getConstraintViolations()) {
+			for (ConstraintViolation<?> violation : e.getConstraintViolations()) {
 				responseObj.put(violation.getPropertyPath().toString(), violation.getMessage());
 			}
-			throw new RestServiceException("Bad Request", responseObj, Response.Status.BAD_REQUEST, ce);
+			// try {
+			// userTransaction.rollback();
+			// } catch (SystemException syex) {
+			// Logger.getLogger(BookingRestService.class.getName()).log(Level.SEVERE,
+			// "Failed to rollback", syex);
+			// }
+			Logger.getLogger(BookingRestService.class.getName()).log(Level.SEVERE,
+					"Failed to create Guest Booking, transaction rolled back", e);
+			throw new RestServiceException("Bad Request", responseObj, Response.Status.BAD_REQUEST, e);
 
 		} catch (CustomerNotFoundException e) {
 			// Handle the unique constraint violation
 			Map<String, String> responseObj = new HashMap<>();
 			responseObj.put("customerId", "The customerId does not exist");
+			// try {
+			// userTransaction.rollback();
+			// } catch (SystemException syex) {
+			// Logger.getLogger(BookingRestService.class.getName()).log(Level.SEVERE,
+			// "Failed to rollback", syex);
+			// }
+			Logger.getLogger(BookingRestService.class.getName()).log(Level.SEVERE,
+					"Failed to create Guest Booking, transaction rolled back", e);
 			throw new RestServiceException("Bad Request", responseObj, Response.Status.BAD_REQUEST, e);
 		} catch (FlightNotFoundException e) {
 			// Handle the unique constraint violation
 			Map<String, String> responseObj = new HashMap<>();
 			responseObj.put("flightId", "The flightId does not exist");
+			// try {
+			// userTransaction.rollback();
+			// } catch (SystemException syex) {
+			// Logger.getLogger(BookingRestService.class.getName()).log(Level.SEVERE,
+			// "Failed to rollback", syex);
+			// }
+			Logger.getLogger(BookingRestService.class.getName()).log(Level.SEVERE,
+					"Failed to create Guest Booking, transaction rolled back", e);
 			throw new RestServiceException("Bad Request", responseObj, Response.Status.BAD_REQUEST, e);
 		} catch (FlightAndDateExistsException e) {
 			// Handle the unique constraint violation
 			Map<String, String> responseObj = new HashMap<>();
 			responseObj.put("flightId,bookingTime", "Booking flight and date duplicate with existing record");
+			// try {
+			// userTransaction.rollback();
+			// } catch (SystemException syex) {
+			// Logger.getLogger(BookingRestService.class.getName()).log(Level.SEVERE,
+			// "Failed to rollback", syex);
+			// }
+			Logger.getLogger(BookingRestService.class.getName()).log(Level.SEVERE,
+					"Failed to create Guest Booking, transaction rolled back", e);
 			throw new RestServiceException("Bad Request", responseObj, Response.Status.CONFLICT, e);
 		} catch (Exception e) {
 			// Handle generic exceptions
 			log.log(Level.SEVERE, e.getMessage());
+			// try {
+			// userTransaction.rollback();
+			// } catch (SystemException syex) {
+			// Logger.getLogger(BookingRestService.class.getName()).log(Level.SEVERE,
+			// "Failed to rollback", syex);
+			// }
+			Logger.getLogger(BookingRestService.class.getName()).log(Level.SEVERE,
+					"Failed to create Guest Booking, transaction rolled back", e);
 			throw new RestServiceException(e);
 		}
 
-//		log.info("createBooking completed. Booking = " + booking.toString());
-//		return builder.build();
-		return null;
+		log.info("createBooking completed. Guest Booking= " + guestbooking.toString());
+		return builder.build();
 	}
 }

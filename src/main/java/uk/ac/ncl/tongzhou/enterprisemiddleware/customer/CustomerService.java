@@ -18,8 +18,6 @@ import javax.validation.ValidationException;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 
-import uk.ac.ncl.tongzhou.enterprisemiddleware.customer.Customer;
-
 /**
  * <p>
  * This Service assumes the Control responsibility in the ECB pattern.
@@ -117,25 +115,48 @@ public class CustomerService {
 	public Customer findById(Long id) {
 		return crud.findById(id);
 	}
-	
-    /**
-     * <p>Deletes the provided Customer object from the application database if found there.</p>
-     *
-     * @param customer The Customer object to be removed from the application database
-     * @return The Customer object that has been successfully removed from the application database; or null
-     * @throws Exception
-     */
-    Customer delete(Customer customer) throws Exception {
-        log.info("delete() - Deleting " + customer.toString());
 
-        Customer deletedCustomer = null;
+	/**
+	 * <p>
+	 * Deletes the provided Customer object from the application database if found
+	 * there.
+	 * </p>
+	 *
+	 * @param customer
+	 *            The Customer object to be removed from the application database
+	 * @return The Customer object that has been successfully removed from the
+	 *         application database; or null
+	 * @throws Exception
+	 */
+	Customer delete(Customer customer) throws Exception {
+		log.info("delete() - Deleting " + customer.toString());
 
-        if (customer.getId() != null) {
-            deletedCustomer = crud.delete(customer);
-        } else {
-            log.info("delete() - No ID was found so can't Delete.");
-        }
+		Customer deletedCustomer = null;
 
-        return deletedCustomer;
-    }
+		if (customer.getId() != null) {
+			deletedCustomer = crud.delete(customer);
+		} else {
+			log.info("delete() - No ID was found so can't Delete.");
+		}
+
+		return deletedCustomer;
+	}
+
+	/**
+	 * <p>
+	 * Returns a single Customer object, specified by a String email.
+	 * </p>
+	 *
+	 * <p>
+	 * If there is more than one Customer with the specified email, only the first
+	 * encountered will be returned.
+	 * </p>
+	 *
+	 * @param email
+	 *            The email field of the Customer to be returned
+	 * @return The first Customer with the specified email
+	 */
+	public Customer findByEmail(String email) {
+		return crud.findByEmail(email);
+	}
 }

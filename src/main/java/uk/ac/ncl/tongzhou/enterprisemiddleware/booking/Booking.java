@@ -27,6 +27,10 @@ import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
+
 import uk.ac.ncl.tongzhou.enterprisemiddleware.customer.Customer;
 import uk.ac.ncl.tongzhou.enterprisemiddleware.flight.Flight;
 
@@ -45,17 +49,6 @@ import uk.ac.ncl.tongzhou.enterprisemiddleware.flight.Flight;
  * @author Tong Zhou
  */
 
-/**
- * Booking 
- * 
- * 
- */
-
-/**
- * Booking
- * 
- * 
- */
 @Entity
 @NamedQueries({ @NamedQuery(name = Booking.FIND_ALL, query = "SELECT c FROM Booking c ORDER BY c.id ASC") })
 @XmlRootElement
@@ -66,6 +59,7 @@ public class Booking implements Serializable {
 	public static final String FIND_ALL = "Booking.findAll";
 
 	@Id
+	@JsonProperty(access = Access.READ_ONLY)
 	@GeneratedValue(strategy = GenerationType.TABLE)
 	private Long id;
 	

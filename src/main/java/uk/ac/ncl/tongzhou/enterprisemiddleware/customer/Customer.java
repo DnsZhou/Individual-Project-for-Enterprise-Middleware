@@ -55,12 +55,6 @@ import uk.ac.ncl.tongzhou.enterprisemiddleware.booking.Booking;
  * is it more error prone due to the syntax being in a String. This makes it
  * harder to debug.
  */
-
-/**
- * Customer 
- * 
- * 
- */
 @Entity
 @NamedQueries({ @NamedQuery(name = Customer.FIND_ALL, query = "SELECT c FROM Customer c ORDER BY c.customerName ASC"),
 		@NamedQuery(name = Customer.FIND_BY_EMAIL, query = "SELECT c FROM Customer c WHERE c.email = :email") })
@@ -73,6 +67,7 @@ public class Customer implements Serializable {
 	public static final String FIND_BY_EMAIL = "Customer.findByEmail";
 
 	@Id
+	@JsonIgnore
 	@GeneratedValue(strategy = GenerationType.TABLE)
 	private Long id;
 

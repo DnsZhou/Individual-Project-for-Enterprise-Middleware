@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.persistence.NoResultException;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.Consumes;
@@ -27,13 +28,13 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.jboss.quickstarts.wfk.util.RestServiceException;
+import org.jboss.resteasy.annotations.cache.Cache;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import uk.ac.ncl.tongzhou.enterprisemiddleware.customer.Customer;
 
 /**
  * <p>
@@ -211,4 +212,40 @@ public class CustomerRestService {
 		log.info("deleteCustomer completed. Customer = " + customer.toString());
 		return builder.build();
 	}
+	
+	 /**
+     * <p>Search for and return a Customer identified by email address.</p>
+     *
+     * <p>Path annotation includes very simple regex to differentiate between email addresses and Ids.
+     * <strong>DO NOT</strong> attempt to use this regex to validate email addresses.</p>
+     *
+     *
+     * @param email The string parameter value provided as a Customer's email
+     * @return A Response containing a single Customer
+     */
+    @GET
+    @Cache
+    @Path("/email/{email:.+[%40|@].+}")
+    @ApiOperation(
+            value = "Fetch a Customer by Email",
+            notes = "Returns a JSON representation of the Customer object with the provided email."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message ="Customer found"),
+            @ApiResponse(code = 404, message = "Customer with email not found")
+    })
+    public Response retrieveCustomersByEmail(
+            @ApiParam(value = "Email of Customer to be fetched", required = true)
+            @PathParam("email")
+            String email) {
+
+        Customer customer;
+        try {
+            customer = service.findByEmail(email);
+        } catch (NoResultException e) {
+            // Verify that the customer exists. Return 404, if not present.
+            throw new RestServiceException("No Customer with the email " + email + " was found!", Response.Status.NOT_FOUND);
+        }
+        return Response.ok(customer).build();
+    }
 }

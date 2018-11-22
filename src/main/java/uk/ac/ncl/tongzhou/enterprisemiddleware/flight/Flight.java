@@ -59,6 +59,7 @@ public class Flight implements Serializable {
 	public static final String FIND_ALL = "Flight.findAll";
 
 	@Id
+	@JsonIgnore
 	@GeneratedValue(strategy = GenerationType.TABLE)
 	private Long id;
 

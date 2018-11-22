@@ -22,7 +22,6 @@ import java.util.Set;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
-import org.jboss.quickstarts.wfk.contact.ContactRestService;
 import org.jboss.quickstarts.wfk.util.JacksonConfig;
 import org.jboss.quickstarts.wfk.util.RestServiceExceptionHandler;
 import org.jboss.resteasy.plugins.providers.RegisterBuiltin;
@@ -32,6 +31,7 @@ import io.swagger.jaxrs.config.BeanConfig;
 import uk.ac.ncl.tongzhou.enterprisemiddleware.booking.BookingRestService;
 import uk.ac.ncl.tongzhou.enterprisemiddleware.customer.CustomerRestService;
 import uk.ac.ncl.tongzhou.enterprisemiddleware.flight.FlightRestService;
+import uk.ac.ncl.tongzhou.enterprisemiddleware.guestbooking.GuestBookingRestService;
 
 /**
  * A class extending {@link Application} and annotated with @ApplicationPath is
@@ -74,7 +74,8 @@ public class ContactServiceApplication extends Application {
 		// services.add(ContactRestService.class);
 		services.add(FlightRestService.class);
 		services.add(CustomerRestService.class);
-		// services.add(BookingRestService.class);
+		 services.add(BookingRestService.class);
+		 services.add(GuestBookingRestService.class);
 
 		// Do not edit below
 		services.add(RestServiceExceptionHandler.class);

@@ -97,7 +97,7 @@ public class BookingUnitTest {
 	@InSequence(1)
 	public void testAddBooking() throws Exception {
 
-		Booking booking = createBookingInstance(100001L, 10001L, futureDate);
+		BookingDto booking = createBookingInstance(100001L, 10001L, futureDate);
 		try {
 			bookingRestService.createBooking(booking);
 			fail("Expected a RestServiceException to be thrown");
@@ -112,17 +112,17 @@ public class BookingUnitTest {
 	/**
 	 * <p>
 	 * A utility method to construct a
-	 * {@link org.jboss.quickstarts.wfk.GuestBooking.Booking Booking} object for use in
-	 * testing. This object is not persisted.
+	 * {@link org.jboss.quickstarts.wfk.GuestBooking.Booking Booking} object for use
+	 * in testing. This object is not persisted.
 	 * </p>
 	 *
 	 * @return The Booking object create
 	 */
-	private Booking createBookingInstance(Long customerId, Long flightId, Date date) {
-		Booking booking = new Booking();
+	private BookingDto createBookingInstance(Long customerId, Long flightId, Date date) {
+		BookingDto booking = new BookingDto();
 		booking.setBookingDate(date);
-//		booking.setCustomerId(customerId);
-//		booking.setFlightId(flightId);
+		// booking.setCustomerId(customerId);
+		// booking.setFlightId(flightId);
 		return booking;
 	}
 

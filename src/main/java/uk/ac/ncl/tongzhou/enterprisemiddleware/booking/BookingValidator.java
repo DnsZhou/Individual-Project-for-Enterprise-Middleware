@@ -64,13 +64,14 @@ public class BookingValidator {
 	 * @throws ConstraintViolationException
 	 *             If Bean Validation errors exist
 	 */
-	void validateBooking(Booking booking)
+	void validateBooking(BookingDto booking)
 			throws CustomerNotFoundException, ConstraintViolationException, ValidationException {
-		// Create a bean validator and check for issues.
-		Set<ConstraintViolation<Booking>> violations = validator.validate(booking);
-		if (!violations.isEmpty()) {
-			throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(violations));
-		}
+		// // Create a bean validator and check for issues.
+		// Set<ConstraintViolation<Booking>> violations = validator.validate(booking);
+		// if (!violations.isEmpty()) {
+		// throw new ConstraintViolationException(new
+		// HashSet<ConstraintViolation<?>>(violations));
+		// }
 		// Check the customer id and flight id of the booking
 		if (customerIdNotExist(booking)) {
 			throw new CustomerNotFoundException("Customer Not Found");
@@ -94,8 +95,8 @@ public class BookingValidator {
 	 * @param booking
 	 * @return
 	 */
-	boolean customerIdNotExist(Booking booking) {
-		Customer customer = customerService.findById(booking.getCustomer().getId());
+	boolean customerIdNotExist(BookingDto booking) {
+		Customer customer = customerService.findById(booking.getCustomerId());
 		return customer == null;
 	}
 
@@ -109,8 +110,8 @@ public class BookingValidator {
 	 * @param booking
 	 * @return
 	 */
-	boolean flightIdNotExists(Booking booking) {
-		Flight flight = flightService.findById(booking.getFlight().getId());
+	boolean flightIdNotExists(BookingDto booking) {
+		Flight flight = flightService.findById(booking.getFlightId());
 		return flight == null;
 	}
 
@@ -124,9 +125,10 @@ public class BookingValidator {
 	 * @param booking
 	 * @return
 	 */
-	boolean flightIdAndDateExists(Booking booking) {
+	boolean flightIdAndDateExists(BookingDto booking) {
+		Flight flight = flightService.findById(booking.getFlightId());
 		List<Booking> bookings = crud.findAllByBookingDate(booking.getBookingDate());
-		bookings.contains(crud.findAllByFlightId(booking.getFlight().getId()));
+		bookings.contains(crud.findAllByFlightId(booking.getFlightId()));
 		return bookings != null && bookings.size() > 0;
 	}
 }
