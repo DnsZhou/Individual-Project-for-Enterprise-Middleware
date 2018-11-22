@@ -17,6 +17,8 @@ import javax.validation.ValidationException;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 
+import uk.ac.ncl.tongzhou.enterprisemiddleware.flight.Flight;
+
 /**
  * <p>
  * This Service assumes the Control responsibility in the ECB pattern.
@@ -126,4 +128,25 @@ public class FlightService {
 	public Flight findByNumber(String flightNumber) {
 		return crud.findByNumber(flightNumber);
 	}
+	
+    /**
+     * <p>Deletes the provided Flight object from the application database if found there.</p>
+     *
+     * @param flight The Flight object to be removed from the application database
+     * @return The Flight object that has been successfully removed from the application database; or null
+     * @throws Exception
+     */
+    Flight delete(Flight flight) throws Exception {
+        log.info("delete() - Deleting " + flight.toString());
+
+        Flight deletedFlight = null;
+
+        if (flight.getId() != null) {
+            deletedFlight = crud.delete(flight);
+        } else {
+            log.info("delete() - No ID was found so can't Delete.");
+        }
+
+        return deletedFlight;
+    }
 }

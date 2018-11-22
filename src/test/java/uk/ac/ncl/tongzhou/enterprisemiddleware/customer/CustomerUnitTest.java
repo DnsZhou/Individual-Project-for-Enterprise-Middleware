@@ -160,7 +160,7 @@ public class CustomerUnitTest {
 	 */
 	private Customer createCustomerInstance(String name, String email, String phoneNumber) {
 		Customer customer = new Customer();
-		customer.setName(name);
+		customer.setCustomerName(name);
 		customer.setEmail(email);
 		customer.setPhoneNumber(phoneNumber);
 		return customer;

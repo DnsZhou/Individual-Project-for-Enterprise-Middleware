@@ -18,6 +18,8 @@ import javax.validation.ValidationException;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 
+import uk.ac.ncl.tongzhou.enterprisemiddleware.customer.Customer;
+
 /**
  * <p>
  * This Service assumes the Control responsibility in the ECB pattern.
@@ -93,7 +95,7 @@ public class CustomerService {
 	 *             ValidationException, Exception
 	 */
 	Customer create(Customer customer) throws ConstraintViolationException, ValidationException, Exception {
-		log.info("CustomerService.create() - Creating " + customer.getName());
+		log.info("CustomerService.create() - Creating " + customer.getCustomerName());
 
 		// Check to make sure the data fits with the parameters in the Customer model
 		// and passes validation.
@@ -115,4 +117,25 @@ public class CustomerService {
 	public Customer findById(Long id) {
 		return crud.findById(id);
 	}
+	
+    /**
+     * <p>Deletes the provided Customer object from the application database if found there.</p>
+     *
+     * @param customer The Customer object to be removed from the application database
+     * @return The Customer object that has been successfully removed from the application database; or null
+     * @throws Exception
+     */
+    Customer delete(Customer customer) throws Exception {
+        log.info("delete() - Deleting " + customer.toString());
+
+        Customer deletedCustomer = null;
+
+        if (customer.getId() != null) {
+            deletedCustomer = crud.delete(customer);
+        } else {
+            log.info("delete() - No ID was found so can't Delete.");
+        }
+
+        return deletedCustomer;
+    }
 }

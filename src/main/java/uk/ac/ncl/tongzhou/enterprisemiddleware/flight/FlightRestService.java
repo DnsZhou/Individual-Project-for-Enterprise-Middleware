@@ -18,9 +18,11 @@ import javax.inject.Named;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -33,6 +35,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import uk.ac.ncl.tongzhou.enterprisemiddleware.flight.Flight;
 
 /**
  * <p>
@@ -164,6 +167,53 @@ public class FlightRestService {
 		}
 
 		log.info("createFlight completed. Flight = " + flight.toString());
+		return builder.build();
+	}
+	
+	/**
+	 * <p>
+	 * Deletes a flight using the ID provided. If the ID is not present then
+	 * nothing can be deleted.
+	 * </p>
+	 *
+	 * <p>
+	 * Will return a JAX-RS response with either 204 NO CONTENT or with a map of
+	 * fields, and related errors.
+	 * </p>
+	 *
+	 * @param id
+	 *            The Long parameter value provided as the id of the Flight to be
+	 *            deleted
+	 * @return A Response indicating the outcome of the delete operation
+	 */
+	@DELETE
+	@Path("/{id:[0-9]+}")
+	@ApiOperation(value = "Delete a Flight from the database")
+	@ApiResponses(value = { @ApiResponse(code = 204, message = "The flight has been successfully deleted"),
+			@ApiResponse(code = 400, message = "Invalid Flight id supplied"),
+			@ApiResponse(code = 404, message = "Flight with id not found"),
+			@ApiResponse(code = 500, message = "An unexpected error occurred whilst processing the request") })
+	public Response deleteFlight(
+			@ApiParam(value = "Id of Flight to be deleted", allowableValues = "range[0, infinity]", required = true) @PathParam("id") long id) {
+
+		Response.ResponseBuilder builder;
+
+		Flight flight = service.findById(id);
+		if (flight == null) {
+			// Verify that the flight exists. Return 404, if not present.
+			throw new RestServiceException("No Flight with the id " + id + " was found!", Response.Status.NOT_FOUND);
+		}
+
+		try {
+			service.delete(flight);
+
+			builder = Response.noContent();
+
+		} catch (Exception e) {
+			// Handle generic exceptions
+			throw new RestServiceException(e);
+		}
+		log.info("deleteFlight completed. Flight = " + flight.toString());
 		return builder.build();
 	}
 }

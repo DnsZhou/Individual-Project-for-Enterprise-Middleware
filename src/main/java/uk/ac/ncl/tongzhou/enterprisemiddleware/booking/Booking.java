@@ -15,6 +15,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -23,11 +25,10 @@ import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Past;
-import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.hibernate.validator.constraints.NotEmpty;
+import uk.ac.ncl.tongzhou.enterprisemiddleware.customer.Customer;
+import uk.ac.ncl.tongzhou.enterprisemiddleware.flight.Flight;
 
 /**
  * <p>
@@ -49,6 +50,12 @@ import org.hibernate.validator.constraints.NotEmpty;
  * 
  * 
  */
+
+/**
+ * Booking
+ * 
+ * 
+ */
 @Entity
 @NamedQueries({ @NamedQuery(name = Booking.FIND_ALL, query = "SELECT c FROM Booking c ORDER BY c.id ASC") })
 @XmlRootElement
@@ -61,20 +68,23 @@ public class Booking implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE)
 	private Long id;
-
-	@NotNull(message = "Customer Id could not be empty")
-	@Column(name = "customer_id")
-	private Long customerId;
-
-	@NotNull(message = "Flight Id could not be empty")
-	@Column(name = "flight_id")
-	private Long flightId;
+	
+	@ManyToOne
+	@NotNull(message = "Customer could not be empty")
+	@JoinColumn(name = "customer_id", nullable=false)
+	private Customer customer;
+	
+	@ManyToOne
+	@NotNull(message = "Flight could not be empty")
+	@JoinColumn(name = "flight_id", nullable=false)
+	private Flight flight;
 
 	@NotNull(message = "Booking date could not be empty")
 	@Future(message = "Booking date should be in the future")
 	@Column(name = "booking_date")
 	@Temporal(TemporalType.DATE)
 	private Date bookingDate;
+
 
 	/**
 	 * Return the id.
@@ -95,43 +105,6 @@ public class Booking implements Serializable {
 		this.id = id;
 	}
 
-	/**
-	 * Return the customerId.
-	 *
-	 * @return customerId
-	 */
-	public Long getCustomerId() {
-		return customerId;
-	}
-
-	/**
-	 * Set the value of customerId
-	 *
-	 * @param customerId:
-	 *            customerId to be set.
-	 */
-	public void setCustomerId(Long customerId) {
-		this.customerId = customerId;
-	}
-
-	/**
-	 * Return the flightId.
-	 *
-	 * @return flightId
-	 */
-	public Long getFlightId() {
-		return flightId;
-	}
-
-	/**
-	 * Set the value of flightId
-	 *
-	 * @param flightId:
-	 *            flightId to be set.
-	 */
-	public void setFlightId(Long flightId) {
-		this.flightId = flightId;
-	}
 
 	/**
 	 * Return the bookingDate.
@@ -152,6 +125,48 @@ public class Booking implements Serializable {
 		this.bookingDate = bookingDate;
 	}
 
+	/**
+	 * Return the customer.
+	 *
+	 * @return customer
+	 */
+
+	public Customer getCustomer() {
+		return customer;
+	}
+
+	/**
+	 * Set the value of customer
+	 *
+	 * @param customer:
+	 *            customer to be set.
+	 */
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
+	}
+	
+	
+
+	
+	/** 
+	 * Return the flight.
+	 *
+	 * @return flight 
+	 */
+	public Flight getFlight() {
+		return flight;
+	}
+
+	
+	/** 
+	 * Set the value of flight
+	 *
+	 * @param flight: flight to be set.
+	 */
+	public void setFlight(Flight flight) {
+		this.flight = flight;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o)
@@ -167,19 +182,6 @@ public class Booking implements Serializable {
 	@Override
 	public int hashCode() {
 		return Objects.hashCode(id);
-	}
-
-	
-	/**   
-	 * toString 
-	 *  
-	 * @return   
-	 * @see java.lang.Object#toString()   
-	 */
-	@Override
-	public String toString() {
-		return "Booking [id=" + id + ", customerId=" + customerId + ", flightId=" + flightId + ", bookingDate="
-				+ bookingDate + "]";
 	}
 
 

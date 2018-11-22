@@ -7,8 +7,11 @@
 package uk.ac.ncl.tongzhou.enterprisemiddleware.customer;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,6 +19,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
@@ -25,7 +29,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
-import org.jboss.quickstarts.wfk.contact.Contact;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import uk.ac.ncl.tongzhou.enterprisemiddleware.booking.Booking;
 
 /**
  * <p>
@@ -46,6 +54,12 @@ import org.jboss.quickstarts.wfk.contact.Contact;
  * reflects this object. This is the most efficient form of query in JPA though
  * is it more error prone due to the syntax being in a String. This makes it
  * harder to debug.
+ */
+
+/**
+ * Customer 
+ * 
+ * 
  */
 @Entity
 @NamedQueries({ @NamedQuery(name = Customer.FIND_ALL, query = "SELECT c FROM Customer c ORDER BY c.customerName ASC"),
@@ -71,13 +85,16 @@ public class Customer implements Serializable {
 	@NotNull
 	@NotEmpty(message = "Email could not be empty")
 	@Email(message = "The email address must be in the format of name@domain.com")
-	// @Column(name = "email")
 	private String email;
 
 	@NotNull(message = "Phone number could not be empty")
 	@Pattern(regexp = "0[0-9]{10}")
 	@Column(name = "phone_number")
 	private String phoneNumber;
+	
+	@JsonIgnore
+	@OneToMany(cascade = CascadeType.ALL, mappedBy="customer")
+	private Set<Booking> bookings = new HashSet<Booking>();
 
 	/**
 	 * Return the id.
@@ -97,25 +114,7 @@ public class Customer implements Serializable {
 	public void setId(Long id) {
 		this.id = id;
 	}
-
-	/**
-	 * Return the name.
-	 *
-	 * @return name
-	 */
-	public String getName() {
-		return customerName;
-	}
-
-	/**
-	 * Set the value of name
-	 *
-	 * @param name:
-	 *            name to be set.
-	 */
-	public void setName(String name) {
-		this.customerName = name;
-	}
+	
 
 	/**
 	 * Return the email.
@@ -154,6 +153,51 @@ public class Customer implements Serializable {
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
+	
+	
+
+	
+	/** 
+	 * Return the bookings.
+	 *
+	 * @return bookings 
+	 */
+
+	public Set<Booking> getBookings() {
+		return bookings;
+	}
+
+	
+	/** 
+	 * Set the value of bookings
+	 *
+	 * @param bookings: bookings to be set.
+	 */
+	public void setBookings(Set<Booking> bookings) {
+		this.bookings = bookings;
+	}
+	
+	
+
+	
+	/** 
+	 * Return the customerName.
+	 *
+	 * @return customerName 
+	 */
+	public String getCustomerName() {
+		return customerName;
+	}
+
+	
+	/** 
+	 * Set the value of customerName
+	 *
+	 * @param customerName: customerName to be set.
+	 */
+	public void setCustomerName(String customerName) {
+		this.customerName = customerName;
+	}
 
 	@Override
 	public boolean equals(Object o) {
@@ -172,18 +216,16 @@ public class Customer implements Serializable {
 		return Objects.hashCode(email);
 	}
 
-	
-	/**   
-	 * toString 
-	 *  
-	 * @return   
-	 * @see java.lang.Object#toString()   
+	/**
+	 * toString
+	 * 
+	 * @return
+	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
 		return "Customer [id=" + id + ", customerName=" + customerName + ", email=" + email + ", phoneNumber="
 				+ phoneNumber + "]";
 	}
-	
-	
+
 }

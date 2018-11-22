@@ -7,7 +7,9 @@ package uk.ac.ncl.tongzhou.enterprisemiddleware.flight;
 
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,14 +17,16 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import uk.ac.ncl.tongzhou.enterprisemiddleware.flight.Flight;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import uk.ac.ncl.tongzhou.enterprisemiddleware.booking.Booking;
 
 /**
  * <p>
@@ -45,9 +49,7 @@ import uk.ac.ncl.tongzhou.enterprisemiddleware.flight.Flight;
  * harder to debug.
  */
 @Entity
-@NamedQueries({
-	@NamedQuery(name = Flight.FIND_ALL, query = "SELECT c FROM Flight c ORDER BY c.number ASC"),
-})
+@NamedQueries({ @NamedQuery(name = Flight.FIND_ALL, query = "SELECT c FROM Flight c ORDER BY c.number ASC"), })
 @XmlRootElement
 @Table(name = "flight", uniqueConstraints = @UniqueConstraint(columnNames = "number"))
 public class Flight implements Serializable {
@@ -80,6 +82,10 @@ public class Flight implements Serializable {
 	@Pattern(regexp = "[A-Z]{3}", message = "Please use a non-empty alphabetical string, which is upper case, 3 characters in length and different from its point of departure")
 	@Column(name = "destination")
 	private String destination;
+
+	@JsonIgnore
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "flight")
+	private Set<Booking> bookings;
 
 	public Long getId() {
 		return id;
@@ -144,6 +150,25 @@ public class Flight implements Serializable {
 	 */
 	public void setDestination(String flightDestination) {
 		this.destination = flightDestination;
+	}
+
+	/**
+	 * Return the bookings.
+	 *
+	 * @return bookings
+	 */
+	public Set<Booking> getBookings() {
+		return bookings;
+	}
+
+	/**
+	 * Set the value of bookings
+	 *
+	 * @param bookings:
+	 *            bookings to be set.
+	 */
+	public void setBookings(Set<Booking> bookings) {
+		this.bookings = bookings;
 	}
 
 	@Override

@@ -95,7 +95,7 @@ public class BookingValidator {
 	 * @return
 	 */
 	boolean customerIdNotExist(Booking booking) {
-		Customer customer = customerService.findById(booking.getCustomerId());
+		Customer customer = customerService.findById(booking.getCustomer().getId());
 		return customer == null;
 	}
 
@@ -110,7 +110,7 @@ public class BookingValidator {
 	 * @return
 	 */
 	boolean flightIdNotExists(Booking booking) {
-		Flight flight = flightService.findById(booking.getFlightId());
+		Flight flight = flightService.findById(booking.getFlight().getId());
 		return flight == null;
 	}
 
@@ -126,7 +126,7 @@ public class BookingValidator {
 	 */
 	boolean flightIdAndDateExists(Booking booking) {
 		List<Booking> bookings = crud.findAllByBookingDate(booking.getBookingDate());
-		bookings.contains(crud.findAllByFlightId(booking.getFlightId()));
+		bookings.contains(crud.findAllByFlightId(booking.getFlight().getId()));
 		return bookings != null && bookings.size() > 0;
 	}
 }

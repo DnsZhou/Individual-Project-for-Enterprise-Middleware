@@ -112,7 +112,7 @@ public class BookingUnitTest {
 	/**
 	 * <p>
 	 * A utility method to construct a
-	 * {@link org.jboss.quickstarts.wfk.booking.Booking Booking} object for use in
+	 * {@link org.jboss.quickstarts.wfk.GuestBooking.Booking Booking} object for use in
 	 * testing. This object is not persisted.
 	 * </p>
 	 *
@@ -121,8 +121,8 @@ public class BookingUnitTest {
 	private Booking createBookingInstance(Long customerId, Long flightId, Date date) {
 		Booking booking = new Booking();
 		booking.setBookingDate(date);
-		booking.setCustomerId(customerId);
-		booking.setFlightId(flightId);
+//		booking.setCustomerId(customerId);
+//		booking.setFlightId(flightId);
 		return booking;
 	}
 
