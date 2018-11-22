@@ -70,14 +70,13 @@ import io.swagger.annotations.ApiResponses;
 @Produces(MediaType.APPLICATION_JSON)
 @Api(value = "/bookings", description = "Operations about bookings")
 @Stateless
-//@TransactionManagement(TransactionManagementType.BEAN)
+// @TransactionManagement(TransactionManagementType.BEAN)
 public class BookingRestService {
 	@Inject
 	private @Named("logger") Logger log;
 
 	@Inject
 	private BookingService service;
-
 
 	/**
 	 * <p>
@@ -162,14 +161,14 @@ public class BookingRestService {
 		} catch (FlightAndDateExistsException e) {
 			// Handle the unique constraint violation
 			Map<String, String> responseObj = new HashMap<>();
-			responseObj.put("flightId,bookingTime", "Booking flight and date duplicate with existing record");
+			responseObj.put("booking",
+					"Booking flight and date for customer " + booking.getCustomerId() + " already exist in system");
 			throw new RestServiceException("Bad Request", responseObj, Response.Status.CONFLICT, e);
 		} catch (Exception e) {
 			// Handle generic exceptions
 			log.log(Level.SEVERE, e.getMessage());
 			throw new RestServiceException(e);
 		}
-
 
 		log.info("createBooking completed. Booking = " + booking.toString());
 		return builder.build();

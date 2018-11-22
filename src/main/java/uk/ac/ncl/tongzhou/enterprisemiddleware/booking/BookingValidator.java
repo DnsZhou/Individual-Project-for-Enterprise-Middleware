@@ -6,14 +6,12 @@
  */
 package uk.ac.ncl.tongzhou.enterprisemiddleware.booking;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 import javax.validation.Validator;
@@ -81,7 +79,7 @@ public class BookingValidator {
 		}
 		// Check whether the Booking flight and date exists
 		if (flightIdAndDateExists(booking)) {
-			throw new FlightAndDateExistsException("Booking flight and date duplicate with existing record");
+			throw new FlightAndDateExistsException("Duplicate Booking for Same Person");
 		}
 	}
 
@@ -126,9 +124,11 @@ public class BookingValidator {
 	 * @return
 	 */
 	boolean flightIdAndDateExists(BookingDto booking) {
+		Customer customer = customerService.findById(booking.getCustomerId());
 		Flight flight = flightService.findById(booking.getFlightId());
-		List<Booking> bookings = crud.findAllByBookingDate(booking.getBookingDate());
-		bookings.contains(crud.findAllByFlightId(booking.getFlightId()));
-		return bookings != null && bookings.size() > 0;
+		List<Booking> bookings = new ArrayList<Booking>(flight.getBookings());
+		bookings.retainAll(customer.getBookings());
+
+		return bookings.stream().anyMatch(b -> b.getBookingDate().equals(booking.getBookingDate()));
 	}
 }
