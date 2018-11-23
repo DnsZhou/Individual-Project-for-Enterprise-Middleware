@@ -48,7 +48,7 @@ public class ContactServiceApplication extends Application {
 
 	public ContactServiceApplication() {
 		BeanConfig beanConfig = new BeanConfig();
-		beanConfig.setVersion("0.2.2");
+		beanConfig.setVersion("0.3.1");
 		beanConfig.setSchemes(new String[] { "http" });
 		// We may no longer need to change this
 		// beanConfig.setHost("localhost:8080/jboss-contacts-swagger");
