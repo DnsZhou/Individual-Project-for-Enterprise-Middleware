@@ -20,6 +20,8 @@ import javax.persistence.criteria.Root;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 
+import org.jboss.quickstarts.wfk.contact.Contact;
+
 import uk.ac.ncl.tongzhou.enterprisemiddleware.flight.Flight;
 import uk.ac.ncl.tongzhou.enterprisemiddleware.flight.FlightService;
 
@@ -73,6 +75,21 @@ public class BookingRepository {
 	 */
 	Booking findById(Long id) {
 		return em.find(Booking.class, id);
+	}
+
+	/**
+	 * <p>
+	 * Returns a single Booking object, specified by a Long customerId.
+	 * </p>
+	 *
+	 * @param id
+	 *            The id field of the Booking to be returned
+	 * @return The Booking with the specified id
+	 */
+	Booking findByCustomerId(Long customerId) {
+		TypedQuery<Booking> query = em.createNamedQuery(Booking.FIND_ALL_BY_CUSTOMER_ID, Booking.class)
+				.setParameter("customerId", customerId);
+		return query.getSingleResult();
 	}
 
 	/**

@@ -114,9 +114,9 @@ public class TravelAgentRestService {
 
 			// Find the customer in other two system by customer, return the customerId.
 			// create one if not found.
-			hotelCustomerId = travelAgentService.getCustomerIdInOuterSystem(BookingSystemType.FLIGHT_SYSTEM,
+			hotelCustomerId = travelAgentService.getCustomerIdInOuterSystem(BookingSystemType.HOTEL_SYSTEM,
 					currentCustomer);
-			taxiCustomerId = travelAgentService.getCustomerIdInOuterSystem(BookingSystemType.FLIGHT_SYSTEM,
+			taxiCustomerId = travelAgentService.getCustomerIdInOuterSystem(BookingSystemType.TAXI_SYSTEM,
 					currentCustomer);
 
 			// create the booking in own system
@@ -127,9 +127,9 @@ public class TravelAgentRestService {
 			flightBooking = bookingService.create(bookingDto);
 
 			// create the booking in other two system
-			hotelBookingId = travelAgentService.createBookingInOuterSystem(BookingSystemType.FLIGHT_SYSTEM,
+			hotelBookingId = travelAgentService.createBookingInOuterSystem(BookingSystemType.HOTEL_SYSTEM,
 					hotelCustomerId, travelAgentBookingDto.getHotelId(), travelAgentBookingDto.getBookingDate());
-			taxiBookingId = travelAgentService.createBookingInOuterSystem(BookingSystemType.FLIGHT_SYSTEM,
+			taxiBookingId = travelAgentService.createBookingInOuterSystem(BookingSystemType.TAXI_SYSTEM,
 					taxiCustomerId, travelAgentBookingDto.getTaxiId(), travelAgentBookingDto.getBookingDate());
 
 			// create agent booking in local system
@@ -141,8 +141,8 @@ public class TravelAgentRestService {
 
 			// roll back the booking in other system
 			try {
-				travelAgentService.deleteBookingInOuterSystem(BookingSystemType.FLIGHT_SYSTEM, hotelBookingId);
-				travelAgentService.deleteBookingInOuterSystem(BookingSystemType.FLIGHT_SYSTEM, taxiBookingId);
+				travelAgentService.deleteBookingInOuterSystem(BookingSystemType.HOTEL_SYSTEM, hotelBookingId);
+				travelAgentService.deleteBookingInOuterSystem(BookingSystemType.TAXI_SYSTEM, taxiBookingId);
 				bookingService.delete(flightBooking);
 			} catch (Exception re) {
 				log.info("Roll back failed," + re.getMessage());

@@ -50,13 +50,15 @@ import uk.ac.ncl.tongzhou.enterprisemiddleware.flight.Flight;
  */
 
 @Entity
-@NamedQueries({ @NamedQuery(name = Booking.FIND_ALL, query = "SELECT c FROM Booking c ORDER BY c.id ASC") })
+@NamedQueries({ @NamedQuery(name = Booking.FIND_ALL, query = "SELECT c FROM Booking c ORDER BY c.id ASC"),
+	@NamedQuery(name = Booking.FIND_ALL_BY_CUSTOMER_ID, query = "SELECT c FROM Booking c WHERE c.customer.id = :customerId ORDER BY c.id ASC")})
 @XmlRootElement
 @Table(name = "booking", uniqueConstraints = @UniqueConstraint(columnNames = "id"))
 public class Booking implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	public static final String FIND_ALL = "Booking.findAll";
+	public static final String FIND_ALL_BY_CUSTOMER_ID = "Booking.findAllByCustomerId";
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE)

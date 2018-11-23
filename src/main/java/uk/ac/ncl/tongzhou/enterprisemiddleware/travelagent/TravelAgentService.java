@@ -22,6 +22,7 @@ import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 
 import org.jboss.quickstarts.wfk.util.ErrorMessage;
+import org.jboss.quickstarts.wfk.util.RestServiceException;
 
 import uk.ac.ncl.tongzhou.enterprisemiddleware.booking.Booking;
 import uk.ac.ncl.tongzhou.enterprisemiddleware.booking.BookingDto;
@@ -45,8 +46,9 @@ public class TravelAgentService {
 	 * create one if not found.
 	 * 
 	 * @return
+	 * @throws Exception
 	 */
-	Long getCustomerIdInOuterSystem(BookingSystemType systemType, Customer customer) {
+	Long getCustomerIdInOuterSystem(BookingSystemType systemType, Customer customer) throws Exception {
 
 		// Get all customers from specific remote system
 		Client client = ClientBuilder.newBuilder().build();
@@ -55,22 +57,27 @@ public class TravelAgentService {
 
 		switch (systemType) {
 		case TAXI_SYSTEM: {
-			List<HotelCustomerDto> customers = response.readEntity(new GenericType<List<HotelCustomerDto>>() {
+			List<TaxiCustomerDto> customers = response.readEntity(new GenericType<List<TaxiCustomerDto>>() {
 			});
 			response.close();
 
 			// Find target customer by e-mail address in remote system
-			HotelCustomerDto targetCustomer = customers.stream()
+			TaxiCustomerDto targetCustomer = customers.stream()
 					.filter(cus -> cus.getEmail().equals(customer.getEmail())).findFirst().orElse(null);
 			if (targetCustomer == null) {
 				// Create the customer if the customer is not found in remote System
-				HotelCustomerDto tCustomer = new HotelCustomerDto();
+				TaxiCustomerDto tCustomer = new TaxiCustomerDto();
 				tCustomer.setName(customer.getCustomerName());
 				tCustomer.setEmail(customer.getEmail());
 				tCustomer.setPhoneNumber(customer.getPhoneNumber());
-				response = target.request().post(Entity.entity(customer, "application/json"));
-				targetCustomer = response.readEntity(HotelCustomerDto.class);
-				response.close();
+				response = target.request().post(Entity.entity(tCustomer, "application/json"));
+				if (response.getStatus() == 201) {
+					targetCustomer = response.readEntity(TaxiCustomerDto.class);
+					response.close();
+				} else {
+					log.info("failed to get Customer Id from Outer System: " + systemType.name());
+					throw new Exception();
+				}
 			}
 			return targetCustomer.getId();
 		}
@@ -85,40 +92,41 @@ public class TravelAgentService {
 			if (targetCustomer == null) {
 				// Create the customer if the customer is not found in remote System
 				HotelCustomerDto hCustomer = new HotelCustomerDto();
-				hCustomer.setName(customer.getCustomerName());
+				hCustomer.setCustomerName(customer.getCustomerName());
 				hCustomer.setEmail(customer.getEmail());
 				hCustomer.setPhoneNumber(customer.getPhoneNumber());
 				response = target.request().post(Entity.entity(hCustomer, "application/json"));
-				if (response.getStatus() == 200) {
+				if (response.getStatus() == 201) {
 					targetCustomer = response.readEntity(HotelCustomerDto.class);
 					response.close();
 				} else {
-					ErrorMessage res = response.readEntity(ErrorMessage.class);
-					System.out.println(res);
+					log.info("failed to get Customer Id from Outer System: " + systemType.name());
+					throw new Exception();
 				}
 			}
 			return targetCustomer.getId();
 		}
 		case FLIGHT_SYSTEM: {
-			List<Customer> customers = response.readEntity(new GenericType<List<Customer>>() {
+			List<FlightCustomerDto> customers = response.readEntity(new GenericType<List<FlightCustomerDto>>() {
 			});
 			response.close();
 
 			// Find target customer by e-mail address in remote system
-			Customer targetCustomer = customers.stream()
+			FlightCustomerDto targetCustomer = customers.stream()
 					.filter(cus -> cus.getEmail().equals(customer.getEmail())).findFirst().orElse(null);
 			if (targetCustomer == null) {
 				// Create the customer if the customer is not found in remote System
-				HotelCustomerDto hCustomer = new HotelCustomerDto();
-				hCustomer.setName(customer.getCustomerName());
-				hCustomer.setEmail(customer.getEmail());
-				hCustomer.setPhoneNumber(customer.getPhoneNumber());
-				response = target.request().post(Entity.entity(hCustomer, "application/json"));
-				if (response.getStatus() == 200) {
-					targetCustomer = response.readEntity(Customer.class);
+				FlightCustomerDto fCustomer = new FlightCustomerDto();
+				fCustomer.setName(customer.getCustomerName());
+				fCustomer.setEmail(customer.getEmail());
+				fCustomer.setPhoneNumber(customer.getPhoneNumber());
+				response = target.request().post(Entity.entity(fCustomer, "application/json"));
+				if (response.getStatus() == 201) {
+					targetCustomer = response.readEntity(FlightCustomerDto.class);
 					response.close();
 				} else {
-					response.getStatusInfo();
+					log.info("failed to get Customer Id from Outer System: " + systemType.name());
+					throw new Exception();
 				}
 			}
 			return targetCustomer.getId();
@@ -133,7 +141,8 @@ public class TravelAgentService {
 	 * 
 	 * @return
 	 */
-	Long createBookingInOuterSystem(BookingSystemType systemType, Long customerId, Long commodityId, Date bookingDate) {
+	Long createBookingInOuterSystem(BookingSystemType systemType, Long customerId, Long commodityId, Date bookingDate)
+			throws Exception {
 
 		// Get all customers from specific remote system
 		Client client = ClientBuilder.newBuilder().build();
@@ -146,19 +155,35 @@ public class TravelAgentService {
 			bookingDto.setTaxiId(commodityId);
 			bookingDto.setDate(bookingDate);
 			Response response = target.request().post(Entity.entity(bookingDto, "application/json"));
-
-			response.close();
-			return null;
+			if (response.getStatus() == 201) {
+				TaxiBookingDto bookingResult = response.readEntity(TaxiBookingDto.class);
+				response.close();
+				return bookingResult.getId();
+			} else {
+				response.getStatusInfo();
+				response.close();
+				throw new RestServiceException();
+			}
 		}
 		case HOTEL_SYSTEM: {
 			HotelBookingDto bookingDto = new HotelBookingDto();
-			bookingDto.setCustomerId(customerId);
-			bookingDto.setHotelId(commodityId);
+			HotelCustomerDto hCustomer = new HotelCustomerDto();
+			HotelDto hotel = new HotelDto();
+			hotel.setId(commodityId);
+			hCustomer.setId(customerId);
+			bookingDto.setCustomer(hCustomer);
+			bookingDto.setHotel(hotel);
 			bookingDto.setBookingDate(bookingDate);
 			Response response = target.request().post(Entity.entity(bookingDto, "application/json"));
-
-			response.close();
-			return null;
+			if (response.getStatus() == 201) {
+				HotelBookingDto bookingResult = response.readEntity(HotelBookingDto.class);
+				response.close();
+				return bookingResult.getId();
+			} else {
+				response.getStatusInfo();
+				response.close();
+				throw new RestServiceException();
+			}
 		}
 		case FLIGHT_SYSTEM: {
 			BookingDto bookingDto = new BookingDto();
@@ -172,9 +197,9 @@ public class TravelAgentService {
 				return bookingResult.getId();
 			} else {
 				response.getStatusInfo();
+				response.close();
+				throw new RestServiceException();
 			}
-			response.close();
-			return null;
 		}
 		}
 		return null;
@@ -212,7 +237,7 @@ public class TravelAgentService {
 	TravelAgentBooking create(TravelAgentBookingDto travelAgentBookingDto, Long flightBookingId, Long hotelBookingId,
 			Long taxiBookingId) throws ConstraintViolationException, ValidationException, Exception {
 		log.info("TravelAgentService.create() - Creating Booking-" + travelAgentBookingDto);
-		
+
 		TravelAgentBooking booking = new TravelAgentBooking();
 		booking.setFlightBookingId(flightBookingId);
 		booking.setHotelBookingId(hotelBookingId);

@@ -28,6 +28,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.jboss.quickstarts.wfk.util.RestServiceException;
+import org.jboss.resteasy.annotations.cache.Cache;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -104,6 +105,38 @@ public class BookingRestService {
 
 		return Response.ok(bookings).build();
 	}
+	
+	 /**
+     * <p>Search for and return a Booking identified by Customer id.</p>
+     *
+     * @param id The long parameter value provided as a Booking's Customer id
+     * @return A Response containing a single Booking
+     */
+    @GET
+    @Cache
+    @Path("/{id:[0-9]+}")
+    @ApiOperation(
+            value = "Fetch a Booking by Customer id",
+            notes = "Returns a JSON representation of the Booking object with the provided customer id."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message ="Booking found"),
+            @ApiResponse(code = 404, message = "Booking with id not found")
+    })
+    public Response retrieveBookingById(
+            @ApiParam(value = "CustomerId of Booking to be fetched", allowableValues = "range[0, infinity]", required = true)
+            @PathParam("id")
+            long id) {
+
+        Booking booking = service.findByCustomerId(id);
+        if (booking == null) {
+            // Verify that the booking exists. Return 404, if not present.
+            throw new RestServiceException("No Booking with the id " + id + " was found!", Response.Status.NOT_FOUND);
+        }
+        log.info("findByCustomerId " + id + ": found Booking = " + booking.toString());
+
+        return Response.ok(booking).build();
+    }
 
 	/**
 	 * <p>

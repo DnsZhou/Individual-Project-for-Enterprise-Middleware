@@ -14,7 +14,7 @@ package uk.ac.ncl.tongzhou.enterprisemiddleware.travelagent;
 public enum BookingSystemType {
 	FLIGHT_SYSTEM("http://api-deployment-csc8104-180275186.b9ad.pro-us-east-1.openshiftapps.com/api/"), 
 	TAXI_SYSTEM("http://api-deployment-csc8104-180332308.b9ad.pro-us-east-1.openshiftapps.com/api/"), 
-	HOTEL_SYSTEM("http://api-deployment-csc8104-150082206.b9ad.pro-us-east-1.openshiftapps.com/api/");
+	HOTEL_SYSTEM("http://api-deployment-csc8104-160712894.b9ad.pro-us-east-1.openshiftapps.com/api/");
 
 	private String baseUrl;
 

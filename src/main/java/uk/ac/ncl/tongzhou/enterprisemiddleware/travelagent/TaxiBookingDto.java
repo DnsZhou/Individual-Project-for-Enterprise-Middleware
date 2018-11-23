@@ -100,4 +100,17 @@ public class TaxiBookingDto implements Serializable {
 		this.taxiId = taxiId;
 	}
 
+	
+	/**   
+	 * toString 
+	 *  
+	 * @return   
+	 * @see java.lang.Object#toString()   
+	 */
+	@Override
+	public String toString() {
+		return "TaxiBookingDto [id=" + id + ", date=" + date + ", customerId=" + customerId + ", taxiId=" + taxiId
+				+ "]";
+	}
+
 }

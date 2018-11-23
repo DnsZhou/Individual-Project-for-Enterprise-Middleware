@@ -121,8 +121,8 @@ public class BookingUnitTest {
 	private BookingDto createBookingInstance(Long customerId, Long flightId, Date date) {
 		BookingDto booking = new BookingDto();
 		booking.setBookingDate(date);
-		// booking.setCustomerId(customerId);
-		// booking.setFlightId(flightId);
+		 booking.setCustomerId(customerId);
+		 booking.setFlightId(flightId);
 		return booking;
 	}
 

@@ -116,6 +116,19 @@ public class BookingService {
 	Booking findById(Long id) {
 		return crud.findById(id);
 	}
+	
+	/**
+	 * <p>
+	 * Returns a single Booking object, specified by a Long CustomerId.
+	 * </p>
+	 *
+	 * @param customerId
+	 *            The id field of the Booking to be returned
+	 * @return The Booking with the specified CustomerId
+	 */
+	Booking findByCustomerId(Long customerId) {
+		return crud.findByCustomerId(customerId);
+	}
 
 	/**
 	 * <p>

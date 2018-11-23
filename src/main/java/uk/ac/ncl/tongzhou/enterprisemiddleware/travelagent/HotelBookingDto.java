@@ -19,8 +19,8 @@ public class HotelBookingDto implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private Long id;
 	private Date bookingDate;
-	private Long customerId;
-	private Long hotelId;
+	private HotelCustomerDto customer;
+	private HotelDto hotel;
 
 	/**
 	 * Return the id.
@@ -41,24 +41,6 @@ public class HotelBookingDto implements Serializable {
 		this.id = id;
 	}
 
-	/**
-	 * Return the customerId.
-	 *
-	 * @return customerId
-	 */
-	public Long getCustomerId() {
-		return customerId;
-	}
-
-	/**
-	 * Set the value of customerId
-	 *
-	 * @param customerId:
-	 *            customerId to be set.
-	 */
-	public void setCustomerId(Long customerId) {
-		this.customerId = customerId;
-	}
 
 	/**
 	 * Return the bookingDate.
@@ -79,23 +61,58 @@ public class HotelBookingDto implements Serializable {
 		this.bookingDate = bookingDate;
 	}
 
-	/**
-	 * Return the hotelId.
+	
+	/** 
+	 * Return the customer.
 	 *
-	 * @return hotelId
+	 * @return customer 
 	 */
-	public Long getHotelId() {
-		return hotelId;
+	public HotelCustomerDto getCustomer() {
+		return customer;
 	}
 
-	/**
-	 * Set the value of hotelId
+	
+	/** 
+	 * Set the value of customer
 	 *
-	 * @param hotelId:
-	 *            hotelId to be set.
+	 * @param customer: customer to be set.
 	 */
-	public void setHotelId(Long hotelId) {
-		this.hotelId = hotelId;
+	public void setCustomer(HotelCustomerDto customer) {
+		this.customer = customer;
 	}
+
+	
+	/** 
+	 * Return the hotel.
+	 *
+	 * @return hotel 
+	 */
+	public HotelDto getHotel() {
+		return hotel;
+	}
+
+	
+	/** 
+	 * Set the value of hotel
+	 *
+	 * @param hotel: hotel to be set.
+	 */
+	public void setHotel(HotelDto hotel) {
+		this.hotel = hotel;
+	}
+
+	
+	/**   
+	 * toString 
+	 *  
+	 * @return   
+	 * @see java.lang.Object#toString()   
+	 */
+	@Override
+	public String toString() {
+		return "HotelBookingDto [id=" + id + ", bookingDate=" + bookingDate + ", customer=" + customer + ", hotel="
+				+ hotel + "]";
+	}
+
 
 }
