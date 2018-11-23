@@ -98,7 +98,6 @@ public class BookingService {
 		Booking booking = new Booking();
 		booking.setBookingDate(bookingDto.getBookingDate());
 		booking.setCustomer(customerService.findById(bookingDto.getCustomerId()));
-		booking.getCustomer().getBookings();
 		booking.setFlight(flightService.findById(bookingDto.getFlightId()));
 		// Write the booking to the database.
 		return crud.create(booking);

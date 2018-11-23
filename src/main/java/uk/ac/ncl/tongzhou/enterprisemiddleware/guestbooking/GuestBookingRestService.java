@@ -17,6 +17,7 @@ import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -66,7 +67,7 @@ import uk.ac.ncl.tongzhou.enterprisemiddleware.flight.FlightService;
 @Produces(MediaType.APPLICATION_JSON)
 @Api(value = "/guestbookings", description = "Operations for guest bookings")
 @Stateless
-// @TransactionManagement(TransactionManagementType.BEAN)
+ @TransactionManagement(TransactionManagementType.BEAN)
 public class GuestBookingRestService {
 	@Inject
 	private @Named("logger") Logger log;
@@ -83,8 +84,8 @@ public class GuestBookingRestService {
 	@Inject
 	private FlightService flightService;
 
-	// @Resource
-	// private UserTransaction userTransaction;
+	 @Resource
+	 private UserTransaction userTransaction;
 
 	/**
 	 * <p>
@@ -114,7 +115,7 @@ public class GuestBookingRestService {
 		Response.ResponseBuilder builder;
 
 		try {
-			// userTransaction.begin();
+			 userTransaction.begin();
 			customerService.create(guestbooking.getCustomer());
 			BookingDto booking = new BookingDto();
 			booking.setCustomerId(guestbooking.getCustomer().getId());
@@ -122,7 +123,7 @@ public class GuestBookingRestService {
 			booking.setBookingDate(guestbooking.getBookingDate());
 			bookingService.create(booking);
 
-			// userTransaction.commit();
+			 userTransaction.commit();
 
 			builder = Response.status(Response.Status.CREATED).entity(booking);
 		} catch (ConstraintViolationException e) {
@@ -132,12 +133,12 @@ public class GuestBookingRestService {
 			for (ConstraintViolation<?> violation : e.getConstraintViolations()) {
 				responseObj.put(violation.getPropertyPath().toString(), violation.getMessage());
 			}
-			// try {
-			// userTransaction.rollback();
-			// } catch (SystemException syex) {
-			// Logger.getLogger(BookingRestService.class.getName()).log(Level.SEVERE,
-			// "Failed to rollback", syex);
-			// }
+			 try {
+			 userTransaction.rollback();
+			 } catch (SystemException syex) {
+			 Logger.getLogger(BookingRestService.class.getName()).log(Level.SEVERE,
+			 "Failed to rollback", syex);
+			 }
 			Logger.getLogger(BookingRestService.class.getName()).log(Level.SEVERE,
 					"Failed to create Guest Booking, transaction rolled back", e);
 			throw new RestServiceException("Bad Request", responseObj, Response.Status.BAD_REQUEST, e);
@@ -146,12 +147,12 @@ public class GuestBookingRestService {
 			// Handle the unique constraint violation
 			Map<String, String> responseObj = new HashMap<>();
 			responseObj.put("customerId", "The customerId does not exist");
-			// try {
-			// userTransaction.rollback();
-			// } catch (SystemException syex) {
-			// Logger.getLogger(BookingRestService.class.getName()).log(Level.SEVERE,
-			// "Failed to rollback", syex);
-			// }
+			 try {
+			 userTransaction.rollback();
+			 } catch (SystemException syex) {
+			 Logger.getLogger(BookingRestService.class.getName()).log(Level.SEVERE,
+			 "Failed to rollback", syex);
+			 }
 			Logger.getLogger(BookingRestService.class.getName()).log(Level.SEVERE,
 					"Failed to create Guest Booking, transaction rolled back", e);
 			throw new RestServiceException("Bad Request", responseObj, Response.Status.BAD_REQUEST, e);
@@ -159,12 +160,12 @@ public class GuestBookingRestService {
 			// Handle the unique constraint violation
 			Map<String, String> responseObj = new HashMap<>();
 			responseObj.put("flightId", "The flightId does not exist");
-			// try {
-			// userTransaction.rollback();
-			// } catch (SystemException syex) {
-			// Logger.getLogger(BookingRestService.class.getName()).log(Level.SEVERE,
-			// "Failed to rollback", syex);
-			// }
+			 try {
+			 userTransaction.rollback();
+			 } catch (SystemException syex) {
+			 Logger.getLogger(BookingRestService.class.getName()).log(Level.SEVERE,
+			 "Failed to rollback", syex);
+			 }
 			Logger.getLogger(BookingRestService.class.getName()).log(Level.SEVERE,
 					"Failed to create Guest Booking, transaction rolled back", e);
 			throw new RestServiceException("Bad Request", responseObj, Response.Status.BAD_REQUEST, e);
@@ -172,12 +173,12 @@ public class GuestBookingRestService {
 			// Handle the unique constraint violation
 			Map<String, String> responseObj = new HashMap<>();
 			responseObj.put("flightId,bookingTime", "Booking flight and date duplicate with existing record");
-			// try {
-			// userTransaction.rollback();
-			// } catch (SystemException syex) {
-			// Logger.getLogger(BookingRestService.class.getName()).log(Level.SEVERE,
-			// "Failed to rollback", syex);
-			// }
+			 try {
+			 userTransaction.rollback();
+			 } catch (SystemException syex) {
+			 Logger.getLogger(BookingRestService.class.getName()).log(Level.SEVERE,
+			 "Failed to rollback", syex);
+			 }
 			Logger.getLogger(BookingRestService.class.getName()).log(Level.SEVERE,
 					"Failed to create Guest Booking, transaction rolled back", e);
 			throw new RestServiceException("Bad Request", responseObj, Response.Status.CONFLICT, e);
@@ -189,12 +190,11 @@ public class GuestBookingRestService {
 		} catch (Exception e) {
 			// Handle generic exceptions
 			log.log(Level.SEVERE, e.getMessage());
-			// try {
-			// userTransaction.rollback();
-			// } catch (SystemException syex) {
-			// Logger.getLogger(BookingRestService.class.getName()).log(Level.SEVERE,
-			// "Failed to rollback", syex);
-			// }
+			try {
+				userTransaction.rollback();
+			} catch (SystemException syex) {
+				Logger.getLogger(BookingRestService.class.getName()).log(Level.SEVERE, "Failed to rollback", syex);
+			}
 			Logger.getLogger(BookingRestService.class.getName()).log(Level.SEVERE,
 					"Failed to create Guest Booking, transaction rolled back", e);
 			throw new RestServiceException(e);

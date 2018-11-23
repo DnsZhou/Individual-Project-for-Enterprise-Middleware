@@ -114,7 +114,7 @@ public class BookingRepository {
 	 * @throws ConstraintViolationException,
 	 *             ValidationException, Exception
 	 */
-	Booking create(Booking booking) throws ConstraintViolationException, ValidationException, Exception {
+	public Booking create(Booking booking) throws ConstraintViolationException, ValidationException, Exception {
 		log.info("BookingRepository.create() - Creating " + booking.getId());
 
 		// Write the booking to the database.
