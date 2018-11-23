@@ -6,6 +6,8 @@
  */
 package uk.ac.ncl.tongzhou.enterprisemiddleware.travelagent;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.ejb.Stateless;
@@ -26,6 +28,8 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import uk.ac.ncl.tongzhou.enterprisemiddleware.booking.Booking;
+import uk.ac.ncl.tongzhou.enterprisemiddleware.booking.BookingDto;
+import uk.ac.ncl.tongzhou.enterprisemiddleware.booking.BookingRestService;
 import uk.ac.ncl.tongzhou.enterprisemiddleware.booking.BookingService;
 import uk.ac.ncl.tongzhou.enterprisemiddleware.customer.Customer;
 import uk.ac.ncl.tongzhou.enterprisemiddleware.customer.CustomerService;
@@ -52,6 +56,11 @@ public class TravelAgentRestService {
 	@Inject
 	private FlightService flightService;
 
+	@Inject
+	private BookingService bookingService;
+
+	@Inject
+	private TravelAgentService travelAgentService;
 	/**
 	 * <p>
 	 * Create a new client which will be used for our outgoing REST client
@@ -86,82 +95,66 @@ public class TravelAgentRestService {
 		if (travelAgentBookingDto == null) {
 			throw new RestServiceException("Bad Request", Response.Status.BAD_REQUEST);
 		}
-
 		Response.ResponseBuilder builder;
+		Long hotelCustomerId = null;
+		Long taxiCustomerId = null;
+		Long hotelBookingId = null;
+		Long taxiBookingId = null;
+		Booking flightBooking = null;
 
 		try {
 
-			// Find the Customer in own by the customerId provided, popup error if not found
+			// Find the Customer in own by the customerId provided, popup exception if not
+			// found
 			Customer currentCustomer = customerService.findById(travelAgentBookingDto.getCustomerId());
 
-			// Find the Flight in own system by the flightId provided, popup error if not
-			// found
+			// Find the Flight in own system by the flightId provided, popup exception if
+			// not found
 			Flight currentFlight = flightService.findById(travelAgentBookingDto.getFlightId());
 
 			// Find the customer in other two system by customer, return the customerId.
 			// create one if not found.
-			Long HotelCustomerId = TravelAgentService.getCustomerIdInOuterSystem(BookingSystemType.FLIGHT_SYSTEM,
+			hotelCustomerId = travelAgentService.getCustomerIdInOuterSystem(BookingSystemType.FLIGHT_SYSTEM,
 					currentCustomer);
-			Long TaxiCustomerId = TravelAgentService.getCustomerIdInOuterSystem(BookingSystemType.FLIGHT_SYSTEM,
+			taxiCustomerId = travelAgentService.getCustomerIdInOuterSystem(BookingSystemType.FLIGHT_SYSTEM,
 					currentCustomer);
 
 			// create the booking in own system
+			BookingDto bookingDto = new BookingDto();
+			bookingDto.setBookingDate(travelAgentBookingDto.getBookingDate());
+			bookingDto.setCustomerId(travelAgentBookingDto.getCustomerId());
+			bookingDto.setFlightId(travelAgentBookingDto.getFlightId());
+			flightBooking = bookingService.create(bookingDto);
 
 			// create the booking in other two system
+			hotelBookingId = travelAgentService.createBookingInOuterSystem(BookingSystemType.FLIGHT_SYSTEM,
+					hotelCustomerId, travelAgentBookingDto.getHotelId(), travelAgentBookingDto.getBookingDate());
+			taxiBookingId = travelAgentService.createBookingInOuterSystem(BookingSystemType.FLIGHT_SYSTEM,
+					taxiCustomerId, travelAgentBookingDto.getTaxiId(), travelAgentBookingDto.getBookingDate());
+
+			// create agent booking in local system
+			TravelAgentBooking travelAgentBooking = travelAgentService.create(travelAgentBookingDto,
+					flightBooking.getId(), hotelBookingId, taxiBookingId);
+			builder = Response.status(Response.Status.CREATED).entity(travelAgentBooking);
 		} catch (Exception e) {
 			log.info(e.getMessage());
+
+			// roll back the booking in other system
+			try {
+				travelAgentService.deleteBookingInOuterSystem(BookingSystemType.FLIGHT_SYSTEM, hotelBookingId);
+				travelAgentService.deleteBookingInOuterSystem(BookingSystemType.FLIGHT_SYSTEM, taxiBookingId);
+				bookingService.delete(flightBooking);
+			} catch (Exception re) {
+				log.info("Roll back failed," + re.getMessage());
+			}
+			Map<String, String> responseObj = new HashMap<>();
+			responseObj.put("travelAgentBooking", "Failed to create travelAgentBooking");
+			throw new RestServiceException("Bad Request", responseObj, Response.Status.BAD_REQUEST, e);
 		}
 
-		// Create client service instance to make REST requests to other service
+		log.info("create agentBooking completed. Booking = " + travelAgentBookingDto.toString());
+		return builder.build();
 
-		// try {
-		// // Go add the new Booking.
-		// bookingRestService.createBooking(booking)
-		//
-		// // Create a "Resource Created" 201 Response and pass the Booking back in case
-		// // it is needed.
-		// builder = Response.status(Response.Status.CREATED).entity(booking);
-		//
-		// } catch (ConstraintViolationException ce) {
-		// // Handle bean validation issues
-		// Map<String, String> responseObj = new HashMap<>();
-		//
-		// for (ConstraintViolation<?> violation : ce.getConstraintViolations()) {
-		// responseObj.put(violation.getPropertyPath().toString(),
-		// violation.getMessage());
-		// }
-		// throw new RestServiceException("Bad Request", responseObj,
-		// Response.Status.BAD_REQUEST, ce);
-		//
-		// } catch (CustomerNotFoundException e) {
-		// // Handle the unique constraint violation
-		// Map<String, String> responseObj = new HashMap<>();
-		// responseObj.put("customerId", "The customerId does not exist");
-		// throw new RestServiceException("Bad Request", responseObj,
-		// Response.Status.BAD_REQUEST, e);
-		// } catch (FlightNotFoundException e) {
-		// // Handle the unique constraint violation
-		// Map<String, String> responseObj = new HashMap<>();
-		// responseObj.put("flightId", "The flightId does not exist");
-		// throw new RestServiceException("Bad Request", responseObj,
-		// Response.Status.BAD_REQUEST, e);
-		// } catch (FlightAndDateExistsException e) {
-		// // Handle the unique constraint violation
-		// Map<String, String> responseObj = new HashMap<>();
-		// responseObj.put("flightId,bookingTime", "Booking flight and date duplicate
-		// with existing record");
-		// throw new RestServiceException("Bad Request", responseObj,
-		// Response.Status.CONFLICT, e);
-		// } catch (Exception e) {
-		// // Handle generic exceptions
-		// log.log(Level.SEVERE, e.getMessage());
-		// throw new RestServiceException(e);
-		// }
-		//
-		// log.info("createBooking completed. Booking = " + booking.toString());
-		// return builder.build();
-
-		return null;
 	}
 
 }

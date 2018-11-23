@@ -6,8 +6,14 @@
  */
 package uk.ac.ncl.tongzhou.enterprisemiddleware.travelagent;
 
+import java.util.Date;
 import java.util.List;
+import java.util.logging.Logger;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.validation.ConstraintViolationException;
+import javax.validation.ValidationException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -17,6 +23,9 @@ import javax.ws.rs.core.Response;
 
 import org.jboss.quickstarts.wfk.util.ErrorMessage;
 
+import uk.ac.ncl.tongzhou.enterprisemiddleware.booking.Booking;
+import uk.ac.ncl.tongzhou.enterprisemiddleware.booking.BookingDto;
+import uk.ac.ncl.tongzhou.enterprisemiddleware.booking.BookingRepository;
 import uk.ac.ncl.tongzhou.enterprisemiddleware.customer.Customer;
 
 /**
@@ -25,6 +34,11 @@ import uk.ac.ncl.tongzhou.enterprisemiddleware.customer.Customer;
  * 
  */
 public class TravelAgentService {
+	@Inject
+	private @Named("logger") Logger log;
+
+	@Inject
+	private TravelAgentBookingRepository crud;
 
 	/**
 	 * Find the customer in other two system by customer, return the customerId.
@@ -32,7 +46,7 @@ public class TravelAgentService {
 	 * 
 	 * @return
 	 */
-	public static Long getCustomerIdInOuterSystem(BookingSystemType systemType, Customer customer) {
+	Long getCustomerIdInOuterSystem(BookingSystemType systemType, Customer customer) {
 
 		// Get all customers from specific remote system
 		Client client = ClientBuilder.newBuilder().build();
@@ -51,7 +65,7 @@ public class TravelAgentService {
 			if (targetCustomer == null) {
 				// Create the customer if the customer is not found in remote System
 				HotelCustomerDto tCustomer = new HotelCustomerDto();
-				tCustomer.setCustomerName(customer.getCustomerName());
+				tCustomer.setName(customer.getCustomerName());
 				tCustomer.setEmail(customer.getEmail());
 				tCustomer.setPhoneNumber(customer.getPhoneNumber());
 				response = target.request().post(Entity.entity(customer, "application/json"));
@@ -71,7 +85,7 @@ public class TravelAgentService {
 			if (targetCustomer == null) {
 				// Create the customer if the customer is not found in remote System
 				HotelCustomerDto hCustomer = new HotelCustomerDto();
-				hCustomer.setCustomerName(customer.getCustomerName());
+				hCustomer.setName(customer.getCustomerName());
 				hCustomer.setEmail(customer.getEmail());
 				hCustomer.setPhoneNumber(customer.getPhoneNumber());
 				response = target.request().post(Entity.entity(hCustomer, "application/json"));
@@ -84,23 +98,24 @@ public class TravelAgentService {
 				}
 			}
 			return targetCustomer.getId();
-		}case FLIGHT_SYSTEM: {
-			List<HotelCustomerDto> customers = response.readEntity(new GenericType<List<HotelCustomerDto>>() {
+		}
+		case FLIGHT_SYSTEM: {
+			List<Customer> customers = response.readEntity(new GenericType<List<Customer>>() {
 			});
 			response.close();
 
 			// Find target customer by e-mail address in remote system
-			HotelCustomerDto targetCustomer = customers.stream()
+			Customer targetCustomer = customers.stream()
 					.filter(cus -> cus.getEmail().equals(customer.getEmail())).findFirst().orElse(null);
 			if (targetCustomer == null) {
 				// Create the customer if the customer is not found in remote System
 				HotelCustomerDto hCustomer = new HotelCustomerDto();
-				hCustomer.setCustomerName(customer.getCustomerName());
+				hCustomer.setName(customer.getCustomerName());
 				hCustomer.setEmail(customer.getEmail());
 				hCustomer.setPhoneNumber(customer.getPhoneNumber());
 				response = target.request().post(Entity.entity(hCustomer, "application/json"));
 				if (response.getStatus() == 200) {
-					targetCustomer = response.readEntity(HotelCustomerDto.class);
+					targetCustomer = response.readEntity(Customer.class);
 					response.close();
 				} else {
 					response.getStatusInfo();
@@ -110,5 +125,99 @@ public class TravelAgentService {
 		}
 		}
 		return null;
+	}
+
+	/**
+	 * Create the booking in other two system by existing information, return the
+	 * bookingId.
+	 * 
+	 * @return
+	 */
+	Long createBookingInOuterSystem(BookingSystemType systemType, Long customerId, Long commodityId, Date bookingDate) {
+
+		// Get all customers from specific remote system
+		Client client = ClientBuilder.newBuilder().build();
+		WebTarget target = client.target(systemType.getBaseUrl() + "bookings");
+
+		switch (systemType) {
+		case TAXI_SYSTEM: {
+			TaxiBookingDto bookingDto = new TaxiBookingDto();
+			bookingDto.setCustomerId(customerId);
+			bookingDto.setTaxiId(commodityId);
+			bookingDto.setDate(bookingDate);
+			Response response = target.request().post(Entity.entity(bookingDto, "application/json"));
+
+			response.close();
+			return null;
+		}
+		case HOTEL_SYSTEM: {
+			HotelBookingDto bookingDto = new HotelBookingDto();
+			bookingDto.setCustomerId(customerId);
+			bookingDto.setHotelId(commodityId);
+			bookingDto.setBookingDate(bookingDate);
+			Response response = target.request().post(Entity.entity(bookingDto, "application/json"));
+
+			response.close();
+			return null;
+		}
+		case FLIGHT_SYSTEM: {
+			BookingDto bookingDto = new BookingDto();
+			bookingDto.setCustomerId(customerId);
+			bookingDto.setFlightId(commodityId);
+			bookingDto.setBookingDate(bookingDate);
+			Response response = target.request().post(Entity.entity(bookingDto, "application/json"));
+			if (response.getStatus() == 201) {
+				Booking bookingResult = response.readEntity(Booking.class);
+				response.close();
+				return bookingResult.getId();
+			} else {
+				response.getStatusInfo();
+			}
+			response.close();
+			return null;
+		}
+		}
+		return null;
+	}
+
+	/**
+	 * Cancel the booking in other two system by existing information, return the
+	 * bookingId.
+	 * 
+	 * @return
+	 */
+	boolean deleteBookingInOuterSystem(BookingSystemType systemType, Long bookingId) {
+		boolean rs = false;
+		if (bookingId != null) {
+			Client client = ClientBuilder.newBuilder().build();
+			WebTarget target = client.target(systemType.getBaseUrl() + "bookings").path(bookingId.toString());
+			Response response = target.request().delete();
+			rs = response.getStatus() == 204;
+			response.close();
+		}
+
+		return rs;
+	}
+
+	/**
+	 * deleteTravelAgentBooking
+	 * 
+	 * @param tABookingId
+	 * @return
+	 */
+	boolean deleteTravelAgentBooking(Long tABookingId) {
+		return false;
+	}
+
+	TravelAgentBooking create(TravelAgentBookingDto travelAgentBookingDto, Long flightBookingId, Long hotelBookingId,
+			Long taxiBookingId) throws ConstraintViolationException, ValidationException, Exception {
+		log.info("TravelAgentService.create() - Creating Booking-" + travelAgentBookingDto);
+		
+		TravelAgentBooking booking = new TravelAgentBooking();
+		booking.setFlightBookingId(flightBookingId);
+		booking.setHotelBookingId(hotelBookingId);
+		booking.setTaxiBookingId(taxiBookingId);
+
+		return crud.create(booking);
 	}
 }

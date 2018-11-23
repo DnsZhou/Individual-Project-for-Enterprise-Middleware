@@ -129,7 +129,7 @@ public class BookingService {
 	 *         application database; or null
 	 * @throws Exception
 	 */
-	Booking delete(Booking booking) throws Exception {
+	public Booking delete(Booking booking) throws Exception {
 		log.info("delete() - Deleting " + booking.toString());
 
 		Booking deletedBooking = null;

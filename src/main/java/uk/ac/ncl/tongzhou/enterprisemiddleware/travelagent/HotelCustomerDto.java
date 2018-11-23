@@ -20,7 +20,7 @@ public class HotelCustomerDto implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	private Long id;
-	private String customerName;
+	private String name;
 	private String email;
 	private String phoneNumber;
 
@@ -43,25 +43,23 @@ public class HotelCustomerDto implements Serializable {
 		this.id = id;
 	}
 
-	
-	
-	/** 
-	 * Return the customerName.
+	/**
+	 * Return the name.
 	 *
-	 * @return customerName 
+	 * @return name
 	 */
-	public String getCustomerName() {
-		return customerName;
+	public String getName() {
+		return name;
 	}
 
-	
-	/** 
-	 * Set the value of customerName
+	/**
+	 * Set the value of name
 	 *
-	 * @param customerName: customerName to be set.
+	 * @param name:
+	 *            name to be set.
 	 */
-	public void setCustomerName(String customerName) {
-		this.customerName = customerName;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	/**
@@ -101,19 +99,5 @@ public class HotelCustomerDto implements Serializable {
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
-
-	
-	/**   
-	 * toString 
-	 *  
-	 * @return   
-	 * @see java.lang.Object#toString()   
-	 */
-	@Override
-	public String toString() {
-		return "HotelCustomerDto [id=" + id + ", customerName=" + customerName + ", email=" + email + ", phoneNumber="
-				+ phoneNumber + "]";
-	}
-
 
 }

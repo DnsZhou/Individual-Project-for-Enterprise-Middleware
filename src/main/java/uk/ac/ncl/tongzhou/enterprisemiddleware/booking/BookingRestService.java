@@ -133,11 +133,11 @@ public class BookingRestService {
 
 		try {
 			// Go add the new Booking.
-			service.create(booking);
+			Booking bookingResult = service.create(booking);
 
 			// Create a "Resource Created" 201 Response and pass the Booking back in case
 			// it is needed.
-			builder = Response.status(Response.Status.CREATED).entity(booking);
+			builder = Response.status(Response.Status.CREATED).entity(bookingResult);
 
 		} catch (ConstraintViolationException ce) {
 			// Handle bean validation issues
