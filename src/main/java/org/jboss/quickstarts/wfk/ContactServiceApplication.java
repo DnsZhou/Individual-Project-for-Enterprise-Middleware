@@ -32,6 +32,7 @@ import uk.ac.ncl.tongzhou.enterprisemiddleware.booking.BookingRestService;
 import uk.ac.ncl.tongzhou.enterprisemiddleware.customer.CustomerRestService;
 import uk.ac.ncl.tongzhou.enterprisemiddleware.flight.FlightRestService;
 import uk.ac.ncl.tongzhou.enterprisemiddleware.guestbooking.GuestBookingRestService;
+import uk.ac.ncl.tongzhou.enterprisemiddleware.travelagent.TravelAgentRestService;
 
 /**
  * A class extending {@link Application} and annotated with @ApplicationPath is
@@ -76,6 +77,7 @@ public class ContactServiceApplication extends Application {
 		services.add(CustomerRestService.class);
 		 services.add(BookingRestService.class);
 		 services.add(GuestBookingRestService.class);
+		 services.add(TravelAgentRestService.class);
 
 		// Do not edit below
 		services.add(RestServiceExceptionHandler.class);

@@ -25,6 +25,7 @@ import javax.validation.constraints.Pattern;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import uk.ac.ncl.tongzhou.enterprisemiddleware.booking.Booking;
 
@@ -88,10 +89,12 @@ public class Flight implements Serializable {
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "flight")
 	private Set<Booking> bookings;
 
+	@JsonProperty
 	public Long getId() {
 		return id;
 	}
 
+	@JsonIgnore
 	public void setId(Long id) {
 		this.id = id;
 	}

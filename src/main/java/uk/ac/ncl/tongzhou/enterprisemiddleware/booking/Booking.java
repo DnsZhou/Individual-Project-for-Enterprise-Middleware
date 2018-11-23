@@ -59,7 +59,6 @@ public class Booking implements Serializable {
 	public static final String FIND_ALL = "Booking.findAll";
 
 	@Id
-	@JsonProperty(access = Access.READ_ONLY)
 	@GeneratedValue(strategy = GenerationType.TABLE)
 	private Long id;
 	
@@ -85,6 +84,7 @@ public class Booking implements Serializable {
 	 *
 	 * @return id
 	 */
+	@JsonProperty
 	public Long getId() {
 		return id;
 	}
@@ -95,6 +95,7 @@ public class Booking implements Serializable {
 	 * @param id:
 	 *            id to be set.
 	 */
+	@JsonIgnore
 	public void setId(Long id) {
 		this.id = id;
 	}

@@ -58,19 +58,6 @@ public class BookingService {
 	@Inject
 	private FlightService flightService;
 
-	private ResteasyClient client;
-
-	/**
-	 * <p>
-	 * Create a new client which will be used for our outgoing REST client
-	 * communication
-	 * </p>
-	 */
-	public BookingService() {
-		// Create client service instance to make REST requests to upstream service
-		client = new ResteasyClientBuilder().build();
-	}
-
 	/**
 	 * <p>
 	 * Returns a List of all persisted {@link Booking} objects, sorted

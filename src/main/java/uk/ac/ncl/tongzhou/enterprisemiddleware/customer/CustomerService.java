@@ -49,19 +49,6 @@ public class CustomerService {
 	@Inject
 	private CustomerRepository crud;
 
-	private ResteasyClient client;
-
-	/**
-	 * <p>
-	 * Create a new client which will be used for our outgoing REST client
-	 * communication
-	 * </p>
-	 */
-	public CustomerService() {
-		// Create client service instance to make REST requests to upstream service
-		client = new ResteasyClientBuilder().build();
-	}
-
 	/**
 	 * <p>
 	 * Returns a List of all persisted {@link Customer} objects, sorted
