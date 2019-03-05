@@ -20,3 +20,5 @@ With the JPA annotation, you no longer need to build a complex data structure in
 ## 4.	PROBLEMS DURING DEVELOPING
 Since our coursework didn’t strictly requires the standard input and output of the APIs, people students have different understanding through the requirement, which means when we try to quote other’s system, the JSON required by the API may varies a lot from person to person, and sometime other’s definition may not be reasonable. So I have no choice but create DTO for every system even it represent to same object, like Booking object in different system. So, It’s very important to standardize the input and output of the API’s before we even start to work on it.
 
+
+See [Project Specification](https://github.com/NCL-CloudComputing/csc8104-tong-zhou/tree/master) for the requirement of the task
